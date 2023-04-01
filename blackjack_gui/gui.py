@@ -2,11 +2,12 @@ import os
 import tkinter
 from dataclasses import dataclass
 from typing import Any, Union
-from tkinter.constants import LEFT, TOP
 
 from PIL import Image, ImageTk
 
 from .lib import Card, Dealer, Hand, Player, Shoe, get_correct_play
+
+from tkinter import messagebox
 
 N_CARDS_MAX = 9
 IMG_PATH = f"{os.path.dirname(__file__)}/images/"
@@ -28,8 +29,6 @@ class Gui:
     slider: tkinter.Scale
     insurance_chip: tkinter.Label
     dealer_info: tkinter.Label
-    dealer_card_values: tkinter.StringVar  # Add dealer_card_values as an attribute
-    player_card_values: tkinter.StringVar  # Add player_card_values as an attribute
 
 
 class Game:
@@ -74,11 +73,6 @@ class Game:
         self.active_slot = hand.slot
         self.display_stack()
         self.enable_correct_buttons(hand)
-
-
-        self.gui.player_card_values.set(f"Player: {hand.sum}")
-        self.gui.dealer_card_values.set(f"Dealer: {self.dealer.preFlip}")
-
         self.display_chip(hand, 0)
         self.display_player_cards(hand)
         if self.dealer.cards[0].label != "A":
@@ -159,8 +153,6 @@ class Game:
         self.hide_buttons(("surrender", "double"))
         hand.deal(self.shoe, self.gui.shoe_progress)
         self.display_player_cards(hand)
-        self.gui.player_card_values.set(f"Player: {hand.sum}")
-
         if hand.is_over is True:
             self.hide(hand)
             self.hide_chips(hand)
@@ -226,8 +218,6 @@ class Game:
             self.active_slot = hand.slot
             self.enable_correct_buttons(hand)
             self.display_finger(hand)
-            self.gui.player_card_values.set(f"Player: {hand.sum}")
-
         else:
             self.clean_info()
             if self.is_all_over() is False or self.dealer.insurance_bet > 0:
@@ -241,8 +231,6 @@ class Game:
                 while self.dealer.is_finished is False:
                     self.dealer.deal(self.shoe, self.gui.shoe_progress)
                     self.display_dealer_cards()
-
-
             self.payout()
 
     def payout(self):
@@ -269,13 +257,10 @@ class Game:
                 self.player.stack += hand.bet * 2
                 result = ""
                 self._display_chips(hand)
-                self.gui.dealer_card_values.set(f"Dealer: {self.dealer.sum}")
-
             elif hand.is_over is True:
                 result = "BUST"
                 self._resolve_lost_hand(hand)
             elif hand.sum < self.dealer.sum:
-                self.gui.dealer_card_values.set(f"Dealer: {self.dealer.sum}")
                 result = f"LOSE ({hand.sum} vs {self.dealer.sum})"
                 self._resolve_lost_hand(hand)
             elif hand.surrender is True:
@@ -283,8 +268,6 @@ class Game:
                 result = ""
             elif hand.sum > self.dealer.sum:
                 self.player.stack += hand.bet * 2
-                self.gui.dealer_card_values.set(f"Dealer: {self.dealer.sum}")
-
                 result = f"WIN ({hand.sum} vs {self.dealer.sum})"
                 self._display_chips(hand)
             elif hand.sum == self.dealer.sum:
@@ -330,7 +313,7 @@ class Game:
         insurance because card counting is not expected, just correct basic play."""
         correct_play = get_correct_play(hand, self.dealer.cards[0], len(self.player.hands))
         if correct_play != play:
-            self.display_info(hand, "Try again!")
+            self.display_info(hand, f"The correct play is: {correct_play}")
             self.gui.root.after(1000, self.clean_info)
             return False
         return True
@@ -373,7 +356,6 @@ class Game:
         """Finds hand in active slot."""
         for hand in self.player.hands:
             if hand.slot == self.active_slot:
-                self.gui.player_card_values.set(f"Player: {hand.sum}")
                 return hand
         raise RuntimeError
 
@@ -390,32 +372,25 @@ class Game:
 
     def hide_buttons(self, buttons: Union[tuple, None] = None):
         """Hides menu buttons."""
-
         if buttons is None:
             for key, button in self.gui.menu.items():
                 if key != "reset":
-                    button.place_forget()
+                    button.configure(state=tkinter.DISABLED)
         else:
             for button in buttons:
                 if button in self.gui.menu.keys():
-                    self.gui.menu[button].place_forget()
+                    self.gui.menu[button].configure(state=tkinter.DISABLED)
 
     def show_buttons(self, buttons: Union[tuple, None] = None):
         """Shows menu buttons."""
-
         if buttons is None:
-            count = 0
-            for index, (key, button) in enumerate(self.gui.menu.items()):
+            for key, button in self.gui.menu.items():
                 if key not in ("insurance", "even-money"):
-                    button.place(x=1025, y=count * 12 + 230)
-                    count += 1
-
+                    button.configure(state=tkinter.NORMAL)
         else:
-            count = 0
-            for index, button in enumerate(buttons):
+            for button in buttons:
                 if button in self.gui.menu.keys():
-                    self.gui.menu[button].place(x=1025, y=count * 12 + 230)
-                    count += 1
+                    self.gui.menu[button].configure(state=tkinter.NORMAL)
 
     def clean_player_slots(self):
         """Cleans player card slots."""
@@ -585,6 +560,23 @@ def round_polygon(canvas, x, y, sharpness, **kwargs):
             points.append(y[0])
     return canvas.create_polygon(points, **kwargs, smooth=tkinter.TRUE)
 
+# function to show the help text
+def show_help(root):
+    help_text = "Blackjack Help\n\n"
+    help_text += "Hit: Request another card from the dealer.\n\n"
+    help_text += "Stay: End your turn without requesting another card.\n\n"
+    help_text += "Double Down: Double your bet and receive only one more card.\n\n"
+    help_text += "Split: If you have two cards of the same rank, split them into two separate hands.\n\n"
+    help_text += "Surrender: Forfeit your hand and lose half your bet.\n\n"
+    help_text += "Insurance: Protect yourself against the dealer having a blackjack when their face-up card is an Ace.\n\n"
+    help_text += "Double-up: Double your bet after your first two cards.\n\n"
+    help_text += "Even money: Take even money when the dealer has an Ace showing and you have a blackjack.\n\n"
+
+    help_window = tkinter.Toplevel(root)
+    help_window.title("Help")
+
+    help_label = tkinter.Label(help_window, text=help_text, font=("Arial", 12), justify="left")
+    help_label.pack(fill="both", expand=True)
 
 def main(args):
     bc = "#4e9572"
@@ -706,24 +698,38 @@ def main(args):
 
     # Side panel
     panel = tkinter.Label(
-        root, width=200, height=720, background="lightgrey", borderwidth=2, relief="groove"
+    root, width=200, height=720, background="lightgrey", borderwidth=0, padx=20
     )
-    panel.place(x=1000, y=0)
+    panel.place(x=1000, y=0) 
 
     # Advisor button
     fix_mistakes = tkinter.IntVar()
     checkbox_container = tkinter.Checkbutton(
-        root, text="Coach mode", variable=fix_mistakes, background="lightgrey"
+        root, text="Coach mode", variable=fix_mistakes, background="white",
+        command=lambda: help_button.config(state=tkinter.NORMAL if fix_mistakes.get() else tkinter.DISABLED)
     )
-    checkbox_container.place(x=1040, y=600)
-    hitImage = Image.open(f"{IMG_PATH}/add.png").resize((5,5), Image.ANTIALIAS)
-    stayImage = Image.open(f"{IMG_PATH}/stop.png").resize((5,5), Image.ANTIALIAS)
-    hitPhoto = ImageTk.PhotoImage(hitImage)
-    stayPhoto = ImageTk.PhotoImage(stayImage)
+    checkbox_container.place(x=1050, y=580)
+
+    # Help button
+    help_button = tkinter.Button(root, text="Get Help", state=tkinter.DISABLED,
+                                command=lambda: show_help(root))
+    help_button.place(x=1065, y=650)
+
     # Buttons
     menu = {
-        name.split()[0].lower(): tkinter.Button(
-            master=root, text=name.replace("-", " "), width=12, font="15"
+            name.split()[0].lower(): tkinter.Button(
+            master=root,
+            text=name.replace("-", " "),
+            width=12,
+            font=("Helvetica", 14),
+            bg="white",
+            fg="black",
+            activebackground="#0072c6",
+            activeforeground="white",
+            bd=0,
+            highlightthickness=0,
+            padx=10,
+            pady=5,
         )
         for name in (
             "Even-money",
@@ -758,6 +764,7 @@ def main(args):
             button.configure(command=lambda: game.even_money())
         else:
             raise ValueError
+
     x_sidepanel = 1025
     for ind, button in enumerate(menu.values()):
         button.place(x=x_sidepanel, y=ind * 33 + 230)
@@ -771,30 +778,6 @@ def main(args):
     slider.set(args.bet)
     slider.place(x=x_sidepanel + 40, y=100)
     bet_label.place(x=x_sidepanel, y=120)
-
-    dealer_card_values = tkinter.StringVar(root)
-    dealer_card_values_label = tkinter.Label(
-        root,
-        textvariable=dealer_card_values,
-        font="Helvetica 13 bold",
-        borderwidth=0,
-        background=bc,
-        fg="white",
-    )
-    dealer_card_values_label.place(x=250, y=20)
-
-    # Add the following lines to create the player's card values label
-    player_card_values = tkinter.StringVar(root)
-    player_card_values_label = tkinter.Label(
-        root,
-        textvariable=player_card_values,
-        font="Helvetica 13 bold",
-        borderwidth=0,
-        background=bc,
-        fg="white",
-    )
-    player_card_values_label.place(x=250, y=600)
-
 
     gui = Gui(
         root,
@@ -811,8 +794,6 @@ def main(args):
         slider,
         insurance_chip,
         dealer_info,
-        dealer_card_values,  # Add dealer_card_values to the Gui class
-        player_card_values,  # Add player_card_values to the Gui class
     )
 
     dealer = Dealer()
