@@ -2,6 +2,7 @@ import os
 import tkinter
 from dataclasses import dataclass
 from typing import Any, Union
+from tkinter.constants import LEFT, TOP
 
 from PIL import Image, ImageTk
 
@@ -27,6 +28,8 @@ class Gui:
     slider: tkinter.Scale
     insurance_chip: tkinter.Label
     dealer_info: tkinter.Label
+    dealer_card_values: tkinter.StringVar  # Add dealer_card_values as an attribute
+    player_card_values: tkinter.StringVar  # Add player_card_values as an attribute
 
 
 class Game:
@@ -71,6 +74,11 @@ class Game:
         self.active_slot = hand.slot
         self.display_stack()
         self.enable_correct_buttons(hand)
+
+
+        self.gui.player_card_values.set(f"Player: {hand.sum}")
+        self.gui.dealer_card_values.set(f"Dealer: {self.dealer.preFlip}")
+
         self.display_chip(hand, 0)
         self.display_player_cards(hand)
         if self.dealer.cards[0].label != "A":
@@ -151,6 +159,8 @@ class Game:
         self.hide_buttons(("surrender", "double"))
         hand.deal(self.shoe, self.gui.shoe_progress)
         self.display_player_cards(hand)
+        self.gui.player_card_values.set(f"Player: {hand.sum}")
+
         if hand.is_over is True:
             self.hide(hand)
             self.hide_chips(hand)
@@ -216,6 +226,8 @@ class Game:
             self.active_slot = hand.slot
             self.enable_correct_buttons(hand)
             self.display_finger(hand)
+            self.gui.player_card_values.set(f"Player: {hand.sum}")
+
         else:
             self.clean_info()
             if self.is_all_over() is False or self.dealer.insurance_bet > 0:
@@ -229,6 +241,8 @@ class Game:
                 while self.dealer.is_finished is False:
                     self.dealer.deal(self.shoe, self.gui.shoe_progress)
                     self.display_dealer_cards()
+
+
             self.payout()
 
     def payout(self):
@@ -255,10 +269,13 @@ class Game:
                 self.player.stack += hand.bet * 2
                 result = ""
                 self._display_chips(hand)
+                self.gui.dealer_card_values.set(f"Dealer: {self.dealer.sum}")
+
             elif hand.is_over is True:
                 result = "BUST"
                 self._resolve_lost_hand(hand)
             elif hand.sum < self.dealer.sum:
+                self.gui.dealer_card_values.set(f"Dealer: {self.dealer.sum}")
                 result = f"LOSE ({hand.sum} vs {self.dealer.sum})"
                 self._resolve_lost_hand(hand)
             elif hand.surrender is True:
@@ -266,6 +283,8 @@ class Game:
                 result = ""
             elif hand.sum > self.dealer.sum:
                 self.player.stack += hand.bet * 2
+                self.gui.dealer_card_values.set(f"Dealer: {self.dealer.sum}")
+
                 result = f"WIN ({hand.sum} vs {self.dealer.sum})"
                 self._display_chips(hand)
             elif hand.sum == self.dealer.sum:
@@ -354,6 +373,7 @@ class Game:
         """Finds hand in active slot."""
         for hand in self.player.hands:
             if hand.slot == self.active_slot:
+                self.gui.player_card_values.set(f"Player: {hand.sum}")
                 return hand
         raise RuntimeError
 
@@ -370,25 +390,32 @@ class Game:
 
     def hide_buttons(self, buttons: Union[tuple, None] = None):
         """Hides menu buttons."""
+
         if buttons is None:
             for key, button in self.gui.menu.items():
                 if key != "reset":
-                    button.configure(state=tkinter.DISABLED)
+                    button.place_forget()
         else:
             for button in buttons:
                 if button in self.gui.menu.keys():
-                    self.gui.menu[button].configure(state=tkinter.DISABLED)
+                    self.gui.menu[button].place_forget()
 
     def show_buttons(self, buttons: Union[tuple, None] = None):
         """Shows menu buttons."""
+
         if buttons is None:
-            for key, button in self.gui.menu.items():
+            count = 0
+            for index, (key, button) in enumerate(self.gui.menu.items()):
                 if key not in ("insurance", "even-money"):
-                    button.configure(state=tkinter.NORMAL)
+                    button.place(x=1025, y=count * 12 + 230)
+                    count += 1
+
         else:
-            for button in buttons:
+            count = 0
+            for index, button in enumerate(buttons):
                 if button in self.gui.menu.keys():
-                    self.gui.menu[button].configure(state=tkinter.NORMAL)
+                    self.gui.menu[button].place(x=1025, y=count * 12 + 230)
+                    count += 1
 
     def clean_player_slots(self):
         """Cleans player card slots."""
@@ -689,7 +716,10 @@ def main(args):
         root, text="Coach mode", variable=fix_mistakes, background="lightgrey"
     )
     checkbox_container.place(x=1040, y=600)
-
+    hitImage = Image.open(f"{IMG_PATH}/add.png").resize((5,5), Image.ANTIALIAS)
+    stayImage = Image.open(f"{IMG_PATH}/stop.png").resize((5,5), Image.ANTIALIAS)
+    hitPhoto = ImageTk.PhotoImage(hitImage)
+    stayPhoto = ImageTk.PhotoImage(stayImage)
     # Buttons
     menu = {
         name.split()[0].lower(): tkinter.Button(
@@ -742,6 +772,30 @@ def main(args):
     slider.place(x=x_sidepanel + 40, y=100)
     bet_label.place(x=x_sidepanel, y=120)
 
+    dealer_card_values = tkinter.StringVar(root)
+    dealer_card_values_label = tkinter.Label(
+        root,
+        textvariable=dealer_card_values,
+        font="Helvetica 13 bold",
+        borderwidth=0,
+        background=bc,
+        fg="white",
+    )
+    dealer_card_values_label.place(x=250, y=20)
+
+    # Add the following lines to create the player's card values label
+    player_card_values = tkinter.StringVar(root)
+    player_card_values_label = tkinter.Label(
+        root,
+        textvariable=player_card_values,
+        font="Helvetica 13 bold",
+        borderwidth=0,
+        background=bc,
+        fg="white",
+    )
+    player_card_values_label.place(x=250, y=600)
+
+
     gui = Gui(
         root,
         menu,
@@ -757,6 +811,8 @@ def main(args):
         slider,
         insurance_chip,
         dealer_info,
+        dealer_card_values,  # Add dealer_card_values to the Gui class
+        player_card_values,  # Add player_card_values to the Gui class
     )
 
     dealer = Dealer()
