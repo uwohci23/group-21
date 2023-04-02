@@ -28,7 +28,10 @@ class Gui:
     fix_mistakes: tkinter.IntVar
     insurance_chip: tkinter.Label
     dealer_info: tkinter.Label
+    dealer_card_values: tkinter.StringVar  # Add dealer_card_values as an attribute
+    player_card_values: tkinter.StringVar  # Add player_card_values as an attribute
     betChips: list = None
+
 
 class Game:
     def __init__(self, player: Player, dealer: Dealer, gui: Gui, args: Any):
@@ -76,6 +79,9 @@ class Game:
             self.enable_correct_buttons(hand)
             self.display_chip(0,hand)
             self.display_player_cards(hand)
+            self.gui.player_card_values.set(f"Player: {hand.sum}")
+            self.gui.dealer_card_values.set(f"Dealer: {self.dealer.preFlip}")
+
             if self.dealer.cards[0].label != "A":
                 self.hide_buttons(("insurance", "even-money"))
                 if hand.is_blackjack:
@@ -166,6 +172,7 @@ class Game:
         self.hide_buttons(("surrender", "double"))
         hand.deal(self.shoe, self.gui.shoe_progress)
         self.display_player_cards(hand)
+        self.gui.player_card_values.set(f"Player: {hand.sum}")
         if hand.is_over is True:
             self.hide(hand)
             self.hide_chips(hand)
@@ -232,6 +239,7 @@ class Game:
             self.active_slot = hand.slot
             self.enable_correct_buttons(hand)
             self.display_finger(hand)
+            self.gui.player_card_values.set(f"Player: {hand.sum}")
         else:
             self.clean_info()
             if self.is_all_over() is False or self.dealer.insurance_bet > 0:
@@ -299,6 +307,7 @@ class Game:
                 result = "LOSE"
                 self._resolve_lost_hand(hand)
             elif hand.is_over is False and self.dealer.is_over is True:
+                self.gui.dealer_card_values.set(f"Dealer: {self.dealer.sum}")
                 self.dealer_info("BUST")
                 self.player.stack += hand.bet * 2
                 result = ""
@@ -308,12 +317,14 @@ class Game:
                 self._resolve_lost_hand(hand)
             elif hand.sum < self.dealer.sum:
                 result = f"LOSE ({hand.sum} vs {self.dealer.sum})"
+                self.gui.dealer_card_values.set(f"Dealer: {self.dealer.sum}")
                 self._resolve_lost_hand(hand)
             elif hand.surrender is True:
                 self.player.stack += hand.bet / 2
                 result = ""
             elif hand.sum > self.dealer.sum:
                 self.player.stack += hand.bet * 2
+                self.gui.dealer_card_values.set(f"Dealer: {self.dealer.sum}")
                 result = f"WIN ({hand.sum} vs {self.dealer.sum})"
                 self._display_chips(hand)
             elif hand.sum == self.dealer.sum:
@@ -404,6 +415,7 @@ class Game:
         """Finds hand in active slot."""
         for hand in self.player.hands:
             if hand.slot == self.active_slot:
+                self.gui.player_card_values.set(f"Player: {hand.sum}")
                 return hand
         raise RuntimeError
 
@@ -735,6 +747,7 @@ def main(args):
         for pos in range(5)
     }
 
+
     for a_slot in range(4):
         for pos in range(5):
             padx, pady = 0, 0
@@ -787,6 +800,30 @@ def main(args):
     state=tkinter.DISABLED
 )
     help_button.place(x=1025, y=650)
+
+    dealer_card_values = tkinter.StringVar(root)
+    dealer_card_values_label = tkinter.Label(
+        root,
+        textvariable=dealer_card_values,
+        font="Helvetica 13 bold",
+        borderwidth=0,
+        background=bc,
+        fg="white",
+    )
+    dealer_card_values_label.place(x=250, y=20)
+
+    # Add the following lines to create the player's card values label
+    player_card_values = tkinter.StringVar(root)
+    player_card_values_label = tkinter.Label(
+        root,
+        textvariable=player_card_values,
+        font="Helvetica 13 bold",
+        borderwidth=0,
+        background=bc,
+        fg="white",
+    )
+    player_card_values_label.place(x=250, y=600)
+
 
     # Buttons
     menu = {
@@ -888,7 +925,9 @@ def main(args):
         fix_mistakes,
         insurance_chip,
         dealer_info,
-        chipList,
+        dealer_card_values,  # Add dealer_card_values as an attribute
+        player_card_values, # Add player_card_values as an attribute
+        chipList
     )
 
     dealer = Dealer()
