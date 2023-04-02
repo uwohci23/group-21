@@ -562,10 +562,8 @@ def round_polygon(canvas, x, y, sharpness, **kwargs):
 
 # function to show the help text
 def show_help(root):
-    help_text = "Blackjack Help\n\n"
-    help_text += "Hit: Request another card from the dealer.\n\n"
+    help_text = "Hit: Request another card from the dealer.\n\n"
     help_text += "Stay: End your turn without requesting another card.\n\n"
-    help_text += "Double Down: Double your bet and receive only one more card.\n\n"
     help_text += "Split: If you have two cards of the same rank, split them into two separate hands.\n\n"
     help_text += "Surrender: Forfeit your hand and lose half your bet.\n\n"
     help_text += "Insurance: Protect yourself against the dealer having a blackjack when their face-up card is an Ace.\n\n"
@@ -574,7 +572,6 @@ def show_help(root):
 
     help_window = tkinter.Toplevel(root)
     help_window.title("Help")
-
     help_label = tkinter.Label(help_window, text=help_text, font=("Arial", 12), justify="left")
     help_label.pack(fill="both", expand=True)
 
@@ -711,9 +708,22 @@ def main(args):
     checkbox_container.place(x=1050, y=580)
 
     # Help button
-    help_button = tkinter.Button(root, text="Get Help", state=tkinter.DISABLED,
-                                command=lambda: show_help(root))
-    help_button.place(x=1065, y=650)
+    help_button = tkinter.Button(
+        master=root,
+        text="Get Help",
+        width=12,
+        font=("Helvetica", 14),
+        bg="white",
+        fg="black",
+        activebackground="#0072c6",
+        activeforeground="white",
+        bd=0,
+        highlightthickness=0,
+        padx=10,
+        pady=5,
+        command=lambda: show_help(root)
+    )
+    help_button.place(x=1025, y=650)
 
     # Buttons
     menu = {
