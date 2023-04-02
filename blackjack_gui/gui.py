@@ -700,7 +700,7 @@ def main(args):
     panel = tkinter.Label(
     root, width=200, height=720, background="lightgrey", borderwidth=0, padx=20
     )
-    panel.place(x=1000, y=0) 
+    panel.place(x=1000, y=0)
 
     # Advisor button
     fix_mistakes = tkinter.IntVar()
@@ -711,9 +711,23 @@ def main(args):
     checkbox_container.place(x=1050, y=580)
 
     # Help button
-    help_button = tkinter.Button(root, text="Get Help", state=tkinter.DISABLED,
-                                command=lambda: show_help(root))
-    help_button.place(x=1065, y=650)
+    help_button = tkinter.Button(
+    root,
+    text="Get Help",
+    width=12,
+    font=("Helvetica", 14),
+    bg="white",
+    fg="black",
+    activebackground="#0072c6",
+    activeforeground="white",
+    bd=0,
+    highlightthickness=0,
+    padx=10,
+    pady=5,
+    command=lambda: show_help(root),
+    state=tkinter.DISABLED
+)
+    help_button.place(x=1025, y=650)
 
     # Buttons
     menu = {
