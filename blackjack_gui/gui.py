@@ -26,7 +26,6 @@ class Gui:
     finger: dict
     shoe_progress: tkinter.Label
     fix_mistakes: tkinter.IntVar
-    slider: tkinter.Scale
     insurance_chip: tkinter.Label
     dealer_info: tkinter.Label
     betChips: list = None
@@ -48,7 +47,6 @@ class Game:
         if USER_BET > 0:
             self.display_info("")
             self.bet = USER_BET
-            self.gui.slider.configure(state=tkinter.DISABLED)
             self.disable_chips()
             self.hide_all_chips()
             self.hide_insurance_chip()
@@ -138,7 +136,6 @@ class Game:
         self.player.buy_in(self.player.initial_stack)
         self.shoe = self.init_shoe()
         self.clean_dealer_slots()
-        self.gui.slider.set(self.initial_bet)
         self.player.init_count()
         self.display_chip(0)
         self.display_stack()
@@ -328,7 +325,6 @@ class Game:
         self.display_stack()
         self.hide_buttons()
         self.show_buttons(("deal",))
-        self.gui.slider.configure(state=tkinter.NORMAL)
         self.player.update_count(self.dealer, self.shoe)
         self.enable_chips()
         USER_BET = 0
@@ -877,12 +873,6 @@ def main(args):
 
     chipList = [button1, button2, button3, button4]
 
-    # Bet selector
-    bet_label = tkinter.Label(text="Bet:", background="lightgray")
-    slider = tkinter.Scale(root, from_=1, to=10, orient=tkinter.HORIZONTAL, background="lightgray")
-    slider.set(args.bet)
-    slider.place(x=x_sidepanel + 40, y=100)
-    bet_label.place(x=x_sidepanel, y=120)
 
     gui = Gui(
         root,
@@ -896,7 +886,6 @@ def main(args):
         finger,
         shoe_progress,
         fix_mistakes,
-        slider,
         insurance_chip,
         dealer_info,
         chipList,
