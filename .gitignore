@@ -1,3 +1,4 @@
+*.egg-info
 
 venv/bin/activate
 venv/bin/activate.csh
@@ -3049,3 +3050,5 @@ venv/lib/python3.9/site-packages/yaml/resolver.py
 venv/lib/python3.9/site-packages/yaml/scanner.py
 venv/lib/python3.9/site-packages/yaml/serializer.py
 venv/lib/python3.9/site-packages/yaml/tokens.py
+
+.idea
