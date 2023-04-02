@@ -11,7 +11,7 @@ from tkinter import messagebox
 
 N_CARDS_MAX = 9
 IMG_PATH = f"{os.path.dirname(__file__)}/images/"
-
+USER_BET = 0
 
 @dataclass
 class Gui:
@@ -29,7 +29,7 @@ class Gui:
     slider: tkinter.Scale
     insurance_chip: tkinter.Label
     dealer_info: tkinter.Label
-
+    betChips: list = None
 
 class Game:
     def __init__(self, player: Player, dealer: Dealer, gui: Gui, args: Any):
@@ -44,50 +44,54 @@ class Game:
 
     def deal(self):
         """Starts new round."""
-        self.bet = self.gui.slider.get()
-        self.gui.slider.configure(state=tkinter.DISABLED)
-        self.hide_all_chips()
-        self.hide_insurance_chip()
-        self.hide_fingers()
-        self.clean_player_slots()
-        self.dealer_info()
-        self.player.hands = []
-        if self.shoe.n_cards < 52:
-            self.shoe = Shoe(6)
-            self.player.init_count()
-        hand = self.player.start_new_hand(self.bet)
-        self.dealer.init_hand()
-        if self.args.dealer_cards is not None:
-            self.shoe.arrange(self.args.dealer_cards)
-        self.dealer.deal(self.shoe, self.gui.shoe_progress)
-        self.dealer.deal(self.shoe, self.gui.shoe_progress)
-        self.dealer.cards[1].visible = False
-        self.display_dealer_cards()
-        if self.args.cards is not None:
-            self.shoe.arrange(self.args.cards)
-        hand.deal(self.shoe, self.gui.shoe_progress)
-        hand.deal(self.shoe, self.gui.shoe_progress)
-        self.show_buttons()
-        self.hide_buttons(("deal",))
-        self.show()
-        self.active_slot = hand.slot
-        self.display_stack()
-        self.enable_correct_buttons(hand)
-        self.display_chip(hand, 0)
-        self.display_player_cards(hand)
-        if self.dealer.cards[0].label != "A":
-            self.hide_buttons(("insurance", "even-money"))
-            if hand.is_blackjack:
-                self.resolve_blackjack()
-        else:
-            self.hide_buttons(("surrender",))
-            if hand.is_blackjack is True:
-                self.show_buttons(("even-money",))
-                self.hide_buttons(("insurance",))
+        global USER_BET
+        if USER_BET > 0:
+            self.display_info("")
+            self.bet = USER_BET
+            self.gui.slider.configure(state=tkinter.DISABLED)
+            self.disable_chips()
+            self.hide_all_chips()
+            self.hide_insurance_chip()
+            self.hide_fingers()
+            self.clean_player_slots()
+            self.dealer_info()
+            self.player.hands = []
+            if self.shoe.n_cards < 52:
+                self.shoe = Shoe(6)
+                self.player.init_count()
+            hand = self.player.start_new_hand(self.bet)
+            self.dealer.init_hand()
+            if self.args.dealer_cards is not None:
+                self.shoe.arrange(self.args.dealer_cards)
+            self.dealer.deal(self.shoe, self.gui.shoe_progress)
+            self.dealer.deal(self.shoe, self.gui.shoe_progress)
+            self.dealer.cards[1].visible = False
+            self.display_dealer_cards()
+            if self.args.cards is not None:
+                self.shoe.arrange(self.args.cards)
+            hand.deal(self.shoe, self.gui.shoe_progress)
+            hand.deal(self.shoe, self.gui.shoe_progress)
+            self.show_buttons()
+            self.hide_buttons(("deal",))
+            self.show()
+            self.active_slot = hand.slot
+            self.enable_correct_buttons(hand)
+            self.display_chip(0,hand)
+            self.display_player_cards(hand)
+            if self.dealer.cards[0].label != "A":
+                self.hide_buttons(("insurance", "even-money"))
+                if hand.is_blackjack:
+                    self.resolve_blackjack()
             else:
-                self.show_buttons(("insurance",))
-                self.hide_buttons(("even-money",))
-
+                self.hide_buttons(("surrender",))
+                if hand.is_blackjack is True:
+                    self.show_buttons(("even-money",))
+                    self.hide_buttons(("insurance",))
+                else:
+                    self.show_buttons(("insurance",))
+                    self.hide_buttons(("even-money",))
+        else:
+            self.display_info("Please bet")
     def surrender(self):
         """Method for Surrender button."""
         if self.gui.fix_mistakes.get() == 1:
@@ -119,7 +123,7 @@ class Game:
         self.display_stack()
         hand.bet += self.bet
         hand.deal(self.shoe, self.gui.shoe_progress)
-        self.display_chip(hand, 1)
+        self.display_chip(1, hand)
         hand.is_finished = True
         self.display_player_cards(hand, rotate_last=True)
         if hand.sum > 21:
@@ -136,7 +140,19 @@ class Game:
         self.clean_dealer_slots()
         self.gui.slider.set(self.initial_bet)
         self.player.init_count()
-        self.deal()
+        self.display_chip(0)
+        self.display_stack()
+
+
+
+    def disable_chips(self):
+        for chip in self.gui.betChips:
+            chip.configure(state= tkinter.DISABLED)
+
+    def enable_chips(self):
+        for chip in self.gui.betChips:
+            chip.configure(state= tkinter.NORMAL)
+
 
     def next(self):
         """Methods for Next button."""
@@ -156,7 +172,7 @@ class Game:
         if hand.is_over is True:
             self.hide(hand)
             self.hide_chips(hand)
-            self.display_info(hand, "BUST")
+            self.display_info("BUST", hand)
         if hand.is_finished is False:
             self.enable_correct_buttons(hand)
         else:
@@ -193,7 +209,7 @@ class Game:
         new_hand = self.player.start_new_hand(self.bet)
         split_card = hand.cards.pop()
         new_hand.deal(split_card, self.gui.shoe_progress)
-        self.display_chip(new_hand, 0)
+        self.display_chip(0, new_hand)
         self.display_stack()
         for handy in (hand, new_hand):
             handy.is_split_hand = True
@@ -214,6 +230,7 @@ class Game:
     def resolve_next_hand(self):
         """Moves to next unfinished hand."""
         hand = self.get_first_unfinished_hand()
+
         if hand is not None:
             self.active_slot = hand.slot
             self.enable_correct_buttons(hand)
@@ -233,9 +250,41 @@ class Game:
                     self.display_dealer_cards()
             self.payout()
 
+    def increment_bet(self, type: str):
+        global USER_BET
+        self.hide_all_chips()
+        if type == "red":
+            if self.player.stack - 5 < 0:
+                self.display_info("You cannot have a negative balance")
+            else:
+                USER_BET += 5
+                self.player.stack -= 5
+        elif type == "blue":
+            if self.player.stack - 10 < 0:
+                self.display_info("You cannot have a negative balance")
+            else:
+                USER_BET += 10
+                self.player.stack -= 10
+        elif type == "green":
+            if self.player.stack - 25 < 0:
+                self.display_info("You cannot have a negative balance")
+            else:
+                USER_BET += 25
+                self.player.stack -= 25
+        elif type == "black":
+            if self.player.stack - 50 < 0:
+                self.display_info("You cannot have a negative balance")
+            else:
+                USER_BET += 50
+                self.player.stack -= 50
+        self.display_chip(0)
+        self.display_stack()
+
     def payout(self):
+        global USER_BET
         """Handles payout of all hands."""
         self.hide_fingers()
+
         for hand in self.player.hands:
             if self.dealer.even_money is True:
                 self.player.stack += hand.bet * 2
@@ -275,11 +324,14 @@ class Game:
                 result = "PUSH"
             else:
                 raise ValueError
-            self.display_info(hand, result)
+            self.display_info(result, hand)
+        self.display_stack()
         self.hide_buttons()
         self.show_buttons(("deal",))
         self.gui.slider.configure(state=tkinter.NORMAL)
         self.player.update_count(self.dealer, self.shoe)
+        self.enable_chips()
+        USER_BET = 0
 
     def _resolve_lost_hand(self, hand: Hand):
         self.hide_chips(hand)
@@ -313,7 +365,7 @@ class Game:
         insurance because card counting is not expected, just correct basic play."""
         correct_play = get_correct_play(hand, self.dealer.cards[0], len(self.player.hands))
         if correct_play != play:
-            self.display_info(hand, f"The correct play is: {correct_play}")
+            self.display_info(f"The correct play is: {correct_play}", hand)
             self.gui.root.after(1000, self.clean_info)
             return False
         return True
@@ -321,7 +373,7 @@ class Game:
     def check_insurance(self, hand: Hand) -> bool:
         """Verifies player decision with insurance / even money. Gives OK when the count is good!"""
         if self.player.true_count < 3:
-            self.display_info(hand, "Try again!")
+            self.display_info("Try again!", hand)
             self.gui.root.after(1000, self.clean_info)
             return False
         return True
@@ -331,13 +383,13 @@ class Game:
 
     def _display_chips(self, hand, bj: bool = False):
         if bj is True:
-            self.display_chip(hand, 1)
-            self.display_chip(hand, 4, color="blue")
+            self.display_chip(1, hand)
+            self.display_chip(4, hand, color="blue")
         elif hand.bet == self.bet:
-            self.display_chip(hand, 1)
+            self.display_chip(1, hand)
         elif hand.bet == (2 * self.bet):
-            self.display_chip(hand, 2)
-            self.display_chip(hand, 3)
+            self.display_chip(2, hand)
+            self.display_chip(3, hand)
 
     def is_all_over(self) -> bool:
         for hand in self.player.hands:
@@ -453,17 +505,25 @@ class Game:
     def hide_insurance_chip(self):
         self.gui.insurance_chip.configure(image="", text="")
 
-    def display_chip(self, hand: Hand, pos: int, color: str = "red"):
+    def display_chip(self, pos: int,hand: Hand = None, color: str = "red"):
+        global USER_BET
         """Displays chip for certain hand and chip position."""
         img = get_chip_image(color)
-        if color == "red":
-            text = self.bet
+        if hand is not None:
+            if color == "red":
+                text = USER_BET
+            else:
+                text = ".5" if self.bet == 1 else self.bet / 2
+            self.gui.chips[f"{str(hand.slot)}{str(pos)}"].configure(
+                image=img, compound="center", fg="white", text=text, font="helvetica 10 bold"
+            )
+            self.gui.chips[f"{str(hand.slot)}{str(pos)}"].image = img
         else:
-            text = ".5" if self.bet == 1 else self.bet / 2
-        self.gui.chips[f"{str(hand.slot)}{str(pos)}"].configure(
-            image=img, compound="center", fg="white", text=text, font="helvetica 10 bold"
-        )
-        self.gui.chips[f"{str(hand.slot)}{str(pos)}"].image = img
+            self.gui.chips[f"{str(2)}{str(0)}"].configure(
+                image=img, compound="center", fg="white", text=USER_BET, font="helvetica 10 bold"
+            )
+            self.gui.chips[f"{str(2)}{str(0)}"].image = img
+
 
     def display_finger(self, hand: Hand):
         """Displays dealer finger over hand."""
@@ -490,9 +550,12 @@ class Game:
         for finger in self.gui.finger.values():
             finger.configure(image="")
 
-    def display_info(self, hand: Hand, info: str):
+    def display_info(self, info: str, hand: Hand = None):
         """Prints text below hand."""
-        self.gui.info_text[str(hand.slot)].set(info)
+        if hand is not None:
+            self.gui.info_text[str(hand.slot)].set(info)
+        else:
+            self.gui.info_text[str(2)].set(info)
 
     @staticmethod
     def init_shoe():
@@ -527,8 +590,8 @@ def get_image(
 
 def get_chip_image(color: str = "red"):
     size = 50
-    filename = f"{IMG_PATH}/{color}-chip.png"
-    image = Image.open(filename).resize((size, size - 15), Image.ANTIALIAS)
+    filename = f"{IMG_PATH}/{color}.png"
+    image = Image.open(filename).resize((size, size), Image.ANTIALIAS)
     return ImageTk.PhotoImage(image)
 
 
@@ -786,6 +849,34 @@ def main(args):
     menu["deal"].place(x=x_sidepanel, y=500)
     menu["reset"].place(x=x_sidepanel, y=20)
 
+    # Add chips
+    chipList = []
+    redChip = Image.open(f"{IMG_PATH}/red.png").resize((50, 50 ), Image.ANTIALIAS)
+    redChipPhoto = ImageTk.PhotoImage(redChip)
+
+    blueChip = Image.open(f"{IMG_PATH}/blue.png").resize((50, 50 ), Image.ANTIALIAS)
+    blueChipPhoto = ImageTk.PhotoImage(blueChip)
+
+    greenChip = Image.open(f"{IMG_PATH}/green.png").resize((50, 50), Image.ANTIALIAS)
+    greenChipPhoto = ImageTk.PhotoImage(greenChip)
+
+    blackChip = Image.open(f"{IMG_PATH}/black.png").resize((50, 50), Image.ANTIALIAS)
+    blackChipPhoto = ImageTk.PhotoImage(blackChip)
+
+    button1 = tkinter.Button(root, image=redChipPhoto, bd = 0, command = lambda: game.increment_bet("red"), bg=bc)
+    button1.place(x=500, y = 600)
+
+    button2 = tkinter.Button(root, image=blueChipPhoto, bd = 0, command = lambda: game.increment_bet("blue"), fg=bc)
+    button2.place(x=555, y = 600)
+
+    button3 = tkinter.Button(root, image=greenChipPhoto, bd = 0, command = lambda: game.increment_bet("green"), fg="white")
+    button3.place(x=610, y = 600)
+
+    button4 = tkinter.Button(root, image=blackChipPhoto, bd = 0, command = lambda: game.increment_bet("black"), fg="white")
+    button4.place(x=665, y = 600)
+
+    chipList = [button1, button2, button3, button4]
+
     # Bet selector
     bet_label = tkinter.Label(text="Bet:", background="lightgray")
     slider = tkinter.Scale(root, from_=1, to=10, orient=tkinter.HORIZONTAL, background="lightgray")
@@ -808,6 +899,7 @@ def main(args):
         slider,
         insurance_chip,
         dealer_info,
+        chipList,
     )
 
     dealer = Dealer()

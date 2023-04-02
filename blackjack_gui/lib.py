@@ -156,7 +156,6 @@ class Player:
     def start_new_hand(self, bet: float) -> Hand:
         hand = Hand()
         hand.bet = bet
-        self.stack -= bet
         self.invested += bet
         hand.slot = self._get_next_free_slot()
         self.hands.append(hand)
