@@ -705,7 +705,7 @@ def main(args):
     # Advisor button
     fix_mistakes = tkinter.IntVar()
     checkbox_container = tkinter.Checkbutton(
-        root, text="Coach mode", variable=fix_mistakes, background="white",
+        root, text="Coach mode", variable=fix_mistakes,fg="black", background="lightgrey",
         command=lambda: help_button.config(state=tkinter.NORMAL if fix_mistakes.get() else tkinter.DISABLED)
     )
     checkbox_container.place(x=1050, y=580)
