@@ -108,6 +108,7 @@ class Dealer:
     def __init__(self):
         self.cards = []
         self.sum = 0.0
+        self.preFlip = 0.0
         self.is_blackjack = False
         self.is_finished = False
         self.is_over = False
@@ -117,6 +118,7 @@ class Dealer:
     def init_hand(self):
         self.cards = []
         self.sum = 0
+        self.preFlip = 0.0
         self.is_blackjack = False
         self.is_finished = False
         self.is_over = False
@@ -127,6 +129,7 @@ class Dealer:
         card = shoe.draw(progress)
         self.cards.append(card)
         self.sum, _ = evaluate_hand(self.cards)
+        self.preFlip, _ = evaluate_hand([self.cards[0]])
         if self.sum > 16:
             self.is_finished = True
         if self.sum == 21 and len(self.cards) == 2:
@@ -153,7 +156,6 @@ class Player:
     def start_new_hand(self, bet: float) -> Hand:
         hand = Hand()
         hand.bet = bet
-        self.stack -= bet
         self.invested += bet
         hand.slot = self._get_next_free_slot()
         self.hands.append(hand)
