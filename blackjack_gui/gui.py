@@ -985,13 +985,13 @@ def main(args):
     button1 = tkinter.Button(game_frame, image=redChipPhoto, bd = 0, command = lambda: game.increment_bet("red"), bg=BC)
     button1.place(x=500, y = 600)
 
-    button2 = tkinter.Button(game_frame, image=blueChipPhoto, bd = 0, command = lambda: game.increment_bet("blue"), bg=bc)
+    button2 = tkinter.Button(game_frame, image=blueChipPhoto, bd = 0, command = lambda: game.increment_bet("blue"), bg=BC)
     button2.place(x=555, y = 600)
 
-    button3 = tkinter.Button(game_frame, image=greenChipPhoto, bd = 0, command = lambda: game.increment_bet("green"), bg=bc)
+    button3 = tkinter.Button(game_frame, image=greenChipPhoto, bd = 0, command = lambda: game.increment_bet("green"), bg=BC)
     button3.place(x=610, y = 600)
 
-    button4 = tkinter.Button(game_frame, image=blackChipPhoto, bd = 0, command = lambda: game.increment_bet("black"), bg=bc)
+    button4 = tkinter.Button(game_frame, image=blackChipPhoto, bd = 0, command = lambda: game.increment_bet("black"), bg=BC)
     button4.place(x=665, y = 600)
 
     chipList = [button1, button2, button3, button4]
