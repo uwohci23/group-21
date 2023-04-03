@@ -1002,25 +1002,42 @@ def main(args):
         main_menu_frame.pack(fill="both")
         game.reset()
 
-
     back_button = tkinter.Button(
-    game_frame,
-    text="⬅ Back",
-    width=12,
-    font=("Helvetica", 14),
-    bg="white",
-    fg="black",
-    activebackground="#0072c6",
-    activeforeground="white",
-    bd=0,
-    highlightthickness=0,
-    padx=10,
-    pady=5,
-    command=back,
-    state=tkinter.NORMAL
-)
+        game_frame,
+        text="⬅ Back",
+        width=12,
+        font=("Helvetica", 14),
+        bg="white",
+        fg="black",
+        activebackground="#0072c6",
+        activeforeground="white",
+        bd=0,
+        highlightthickness=0,
+        padx=10,
+        pady=5,
+        command=back,
+        state=tkinter.NORMAL
+    )
 
     back_button.place(x=5, y=5)
+    credits_back_button = tkinter.Button(
+        credits_frame,
+        text="Back",
+        width=12,
+        font=("Helvetica", 14),
+        bg="white",
+        fg="black",
+        activebackground="#0072c6",
+        activeforeground="white",
+        bd=0,
+        highlightthickness=0,
+        padx=10,
+        pady=5,
+        command=back,
+        state=tkinter.NORMAL
+    )
+
+    credits_back_button.place(x=5, y=5)
 
     def start_game():
         main_menu_frame.pack_forget()
