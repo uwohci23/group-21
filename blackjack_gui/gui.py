@@ -1028,7 +1028,7 @@ def main(args):
     back_button.place(x=5, y=5)
     credits_back_button = tkinter.Button(
         credits_frame,
-        text="Back",
+        text="⬅ Back",
         width=12,
         font=("Helvetica", 14),
         bg="white",
