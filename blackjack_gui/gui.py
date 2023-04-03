@@ -1114,7 +1114,7 @@ def main(args):
     credits_button.place(relx=0.5, y=400, anchor="center")
 
     credits_label = tkinter.Label(credits_frame,
-                                  text="Developers:\nReese Collins\nDaniel McGarr\nNavjeeven Mann\nSundin\nAndrew Domfe",
+                                  text="Developers:\nReese Collins\nDaniel McGarr\nNavjeeven Mann\nSundin Nguyen\nAndrew Domfe",
                                   font=("Helvetica", 18),
                                   bg=BC)
     credits_label.place(relx=0.5, rely=0.5, anchor="center")
