@@ -9,10 +9,23 @@ from .lib import Card, Dealer, Hand, Player, Shoe, get_correct_play
 
 from tkinter import messagebox
 
+import pygame
+from pygame import mixer
+
 N_CARDS_MAX = 9
 IMG_PATH = f"{os.path.dirname(__file__)}/images/"
 USER_BET = 0
 BC = "#2B674D"
+
+pygame.mixer.init()
+#shuffling sound effect
+shuffle_sfx = pygame.mixer.Sound("card_shuffle.mp3")
+#handing out cards (start of match) sound effect
+passing_sfx = pygame.mixer.Sound("card_dealing.mp3")
+#hit sound effect
+hit_sfx = pygame.mixer.Sound("card_hit.mp3")
+#bet sound effect
+bet_sfx = pygame.mixer.Sound("chip_bet.mp3")
 
 @dataclass
 class Gui:
@@ -53,6 +66,7 @@ class Game:
         if USER_BET == 0:
             self.display_info("Please bet")
         else:
+            passing_sfx.play()
             self.display_info("")
             self.bet = USER_BET
             self.disable_chips()
@@ -160,6 +174,7 @@ class Game:
         self.hide_insurance_chip()
         self.hide_fingers()
         self.clean_player_slots()
+        shuffle_sfx.play() #play sound effect
 
 
     def disable_chips(self):
@@ -179,6 +194,7 @@ class Game:
 
     def hit(self):
         """Method for Hit button."""
+        hit_sfx.play() #play sound effect
         hand = self.get_hand_in_active_slot()
         if self.gui.fix_mistakes.get() == 1:
             if self.check_play(hand, "hit") is False:
@@ -272,6 +288,7 @@ class Game:
     def increment_bet(self, type: str):
         global USER_BET
         self.hide_all_chips()
+        bet_sfx.play() #play sound effect
         if type == "red":
             if self.player.stack - 5 < 0:
                 self.display_info("You cannot have a negative balance")
@@ -968,13 +985,13 @@ def main(args):
     button1 = tkinter.Button(game_frame, image=redChipPhoto, bd = 0, command = lambda: game.increment_bet("red"), bg=BC)
     button1.place(x=500, y = 600)
 
-    button2 = tkinter.Button(game_frame, image=blueChipPhoto, bd = 0, command = lambda: game.increment_bet("blue"), fg=BC)
+    button2 = tkinter.Button(game_frame, image=blueChipPhoto, bd = 0, command = lambda: game.increment_bet("blue"), bg=bc)
     button2.place(x=555, y = 600)
 
-    button3 = tkinter.Button(game_frame, image=greenChipPhoto, bd = 0, command = lambda: game.increment_bet("green"), fg="white")
+    button3 = tkinter.Button(game_frame, image=greenChipPhoto, bd = 0, command = lambda: game.increment_bet("green"), bg=bc)
     button3.place(x=610, y = 600)
 
-    button4 = tkinter.Button(game_frame, image=blackChipPhoto, bd = 0, command = lambda: game.increment_bet("black"), fg="white")
+    button4 = tkinter.Button(game_frame, image=blackChipPhoto, bd = 0, command = lambda: game.increment_bet("black"), bg=bc)
     button4.place(x=665, y = 600)
 
     chipList = [button1, button2, button3, button4]
@@ -1009,7 +1026,7 @@ def main(args):
         main_menu_frame.pack_forget()
         game_frame.pack(fill="both")
         fix_mistakes.set(0)
-    
+
     menu_label = tkinter.Label(main_menu_frame,
                                   text="BLACKJACK",
                                   font=("Times", 36, "bold italic"),
@@ -1074,7 +1091,7 @@ def main(args):
     credits_button.place(relx=0.5, y=400, anchor="center")
 
     credits_label = tkinter.Label(credits_frame,
-                                  text="Developers:\nReese Collins\nDaniel McGarr\nNavjeeven Mann\nSundin",
+                                  text="Developers:\nReese Collins\nDaniel McGarr\nNavjeeven Mann\nSundin\nAndrew Domfe",
                                   font=("Helvetica", 18),
                                   bg=BC)
     credits_label.place(relx=0.5, rely=0.5, anchor="center")
