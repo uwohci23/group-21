@@ -997,30 +997,53 @@ def main(args):
     chipList = [button1, button2, button3, button4]
 
     def back():
-        game_frame.pack_forget()
-        credits_frame.pack_forget()
-        main_menu_frame.pack(fill="both")
-        game.reset()
-
+        answer = tkinter.messagebox.askyesno(title='Confirmation',
+                                            message='Are you sure you want to exit to main menu?')
+        if answer:
+            game_frame.pack_forget()
+            main_menu_frame.pack(fill="both")
+            game.reset()
 
     back_button = tkinter.Button(
-    game_frame,
-    text="⬅ Back",
-    width=12,
-    font=("Helvetica", 14),
-    bg="white",
-    fg="black",
-    activebackground="#0072c6",
-    activeforeground="white",
-    bd=0,
-    highlightthickness=0,
-    padx=10,
-    pady=5,
-    command=back,
-    state=tkinter.NORMAL
-)
+        game_frame,
+        text="⬅ Back",
+        width=12,
+        font=("Helvetica", 14),
+        bg="white",
+        fg="black",
+        activebackground="#0072c6",
+        activeforeground="white",
+        bd=0,
+        highlightthickness=0,
+        padx=10,
+        pady=5,
+        command=back,
+        state=tkinter.NORMAL
+    )
+
+    def back_credits():
+        credits_frame.pack_forget()
+        main_menu_frame.pack(fill="both")
 
     back_button.place(x=5, y=5)
+    credits_back_button = tkinter.Button(
+        credits_frame,
+        text="Back",
+        width=12,
+        font=("Helvetica", 14),
+        bg="white",
+        fg="black",
+        activebackground="#0072c6",
+        activeforeground="white",
+        bd=0,
+        highlightthickness=0,
+        padx=10,
+        pady=5,
+        command=back_credits,
+        state=tkinter.NORMAL
+    )
+
+    credits_back_button.place(x=5, y=5)
 
     def start_game():
         main_menu_frame.pack_forget()
@@ -1091,7 +1114,7 @@ def main(args):
     credits_button.place(relx=0.5, y=400, anchor="center")
 
     credits_label = tkinter.Label(credits_frame,
-                                  text="Developers:\nReese Collins\nDaniel McGarr\nNavjeeven Mann\nSundin\nAndrew Domfe",
+                                  text="Developers:\nReese Collins\nDaniel McGarr\nNavjeeven Mann\nSundin Nguyen\nAndrew Domfe",
                                   font=("Helvetica", 18),
                                   bg=BC)
     credits_label.place(relx=0.5, rely=0.5, anchor="center")

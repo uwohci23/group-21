@@ -22,7 +22,7 @@ setup(
     packages=find_packages(),
     include_package_data=True,
     python_requires=">=3.8",
-    install_requires=["pillow", "wheel"],
+    install_requires=["pillow", "wheel", "pygame"],
     extras_require={
         "dev": ["pre-commit", "pytest", "pytest-flakefinder", "pylint", "mypy", "types-Pillow"],
     },
