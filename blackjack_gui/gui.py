@@ -995,7 +995,7 @@ def main(args):
 
     back_button = tkinter.Button(
     game_frame,
-    text="Back",
+    text="⬅ Back",
     width=12,
     font=("Helvetica", 14),
     bg="white",
