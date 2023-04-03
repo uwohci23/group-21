@@ -683,7 +683,7 @@ def show_help(root):
     help_label.pack(fill="both", expand=True)
 
 def main(args):
-    bc = "#4e9572"
+    bc = "#2B674D"
     root = tkinter.Tk()
     root.geometry("1200x700")
     root.title("Blackjack")
@@ -700,7 +700,11 @@ def main(args):
     )
     rect.place(x=525, y=485)
     round_polygon(rect, [5, 75, 75, 5], [5, 5, 90, 90], 10, width=4, outline="#bbb500", fill=bc)
-
+    rules_text = tkinter.Label(game_frame,
+                                  text="BLACKJACK PAYS 3 TO 2\nDealer must stand on a 17 and draw to 16\nInsurance pays 2 to 1",
+                                  font=("Helvetica", 14, "italic"),
+                                  bg=bc)
+    rules_text.place(relx=0.5, rely=0.5, anchor="center")
     # Shoe status
     shoe_status_container = tkinter.Label(game_frame, borderwidth=0, background="white")
     shoe_status_container.place(x=20, y=40, height=150, width=30)
@@ -809,7 +813,7 @@ def main(args):
 
     # Side panel
     panel = tkinter.Label(
-    game_frame, width=200, height=720, background="lightgrey", borderwidth=0, padx=20
+    game_frame, width=200, height=720, background=bc, borderwidth=0, padx=20
     )
     panel.place(x=1000, y=0)
 
@@ -836,7 +840,7 @@ def main(args):
     padx=10,
     pady=5,
     command=lambda: show_help(game_frame),
-    state=tkinter.DISABLED
+    state=tkinter.ACTIVE
 )
     help_button.place(x=1025, y=650)
 
@@ -999,6 +1003,12 @@ def main(args):
         main_menu_frame.pack_forget()
         game_frame.pack(fill="both")
         fix_mistakes.set(0)
+    
+    menu_label = tkinter.Label(main_menu_frame,
+                                  text="BLACKJACK",
+                                  font=("Times", 36, "bold italic"),
+                                  bg=bc)
+    menu_label.place(relx=0.5, y=225, anchor="center")
 
     play_game_button = tkinter.Button(main_menu_frame,
                                       text="Start Game",
