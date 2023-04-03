@@ -28,6 +28,7 @@ class Gui:
     fix_mistakes: tkinter.IntVar
     insurance_chip: tkinter.Label
     dealer_info: tkinter.Label
+    rebet_button: tkinter.Button
     dealer_card_values: tkinter.StringVar  # Add dealer_card_values as an attribute
     player_card_values: tkinter.StringVar  # Add player_card_values as an attribute
     betChips: list = None
@@ -47,7 +48,10 @@ class Game:
     def deal(self):
         """Starts new round."""
         global USER_BET
-        if USER_BET > 0:
+
+        if USER_BET == 0:
+            self.display_info("Please bet")
+        else:
             self.display_info("")
             self.bet = USER_BET
             self.disable_chips()
@@ -94,8 +98,8 @@ class Game:
                 else:
                     self.show_buttons(("insurance",))
                     self.hide_buttons(("even-money",))
-        else:
-            self.display_info("Please bet")
+
+
     def surrender(self):
         """Method for Surrender button."""
         if self.gui.fix_mistakes.get() == 1:
@@ -119,33 +123,42 @@ class Game:
     def double(self):
         """Method for Double button."""
         hand = self.get_hand_in_active_slot()
-        if self.gui.fix_mistakes.get() == 1:
-            if self.check_play(hand, "double") is False:
-                return
-        self.hide_buttons(("surrender",))
-        self.player.stack -= self.bet
-        self.display_stack()
-        hand.bet += self.bet
-        hand.deal(self.shoe, self.gui.shoe_progress)
-        self.display_chip(1, hand)
-        hand.is_finished = True
-        self.display_player_cards(hand, rotate_last=True)
-        if hand.sum > 21:
-            self.hide(hand)
-            self.hide_chips(hand)
-        self.clean_info()
-        self.resolve_next_hand()
+        if self.player.stack - USER_BET > 0:
+            if self.gui.fix_mistakes.get() == 1:
+                if self.check_play(hand, "double") is False:
+                    return
+            self.hide_buttons(("surrender",))
+            self.player.stack -= self.bet
+            self.display_stack()
+            hand.bet += self.bet
+            hand.deal(self.shoe, self.gui.shoe_progress)
 
+            self.display_chip(1, hand)
+            hand.is_finished = True
+            self.gui.player_card_values.set(f"Player: {hand.sum}")
+            self.display_player_cards(hand, rotate_last=True)
+            if hand.sum > 21:
+                self.hide(hand)
+                self.hide_chips(hand)
+            self.clean_info()
+            self.resolve_next_hand()
+        else:
+            self.display_info("You do not have enough to double")
     def reset(self):
         """Method for Reset button."""
-        self.clean_info()
+
         self.player.buy_in(self.player.initial_stack)
         self.shoe = self.init_shoe()
         self.clean_dealer_slots()
         self.player.init_count()
+        USER_BET = 0
         self.display_chip(0)
         self.display_stack()
-
+        self.clean_info()
+        self.hide_all_chips()
+        self.hide_insurance_chip()
+        self.hide_fingers()
+        self.clean_player_slots()
 
 
     def disable_chips(self):
@@ -338,7 +351,9 @@ class Game:
         self.show_buttons(("deal",))
         self.player.update_count(self.dealer, self.shoe)
         self.enable_chips()
+        self.bet = USER_BET
         USER_BET = 0
+        self.gui.rebet_button.configure(state=tkinter.NORMAL)
 
     def _resolve_lost_hand(self, hand: Hand):
         self.hide_chips(hand)
@@ -465,6 +480,9 @@ class Game:
 
     def clean_info(self):
         """Removes info text behind all slots."""
+        self.gui.dealer_card_values.set(f"")
+        self.gui.player_card_values.set(f"")
+
         for slot in range(4):
             self.gui.info_text[str(slot)].set("")
 
@@ -630,6 +648,21 @@ def round_polygon(canvas, x, y, sharpness, **kwargs):
             points.append(x[0])
             points.append(y[0])
     return canvas.create_polygon(points, **kwargs, smooth=tkinter.TRUE)
+
+
+def rebet(self):
+    global USER_BET
+    if self.player.stack - self.bet < 0:
+        self.display_info("You cannot have a negative balance")
+    else:
+        self.player.stack -= self.bet
+        USER_BET = self.bet
+        self.hide_all_chips()
+        self.display_chip(0)
+        self.display_stack()
+        self.gui.rebet_button.configure(state = tkinter.DISABLED)
+
+
 
 # function to show the help text
 def show_help(root):
@@ -882,6 +915,26 @@ def main(args):
     menu["deal"].place(x=x_sidepanel, y=500)
     menu["reset"].place(x=x_sidepanel, y=20)
 
+    #Rebet Button
+    rebet_button = tkinter.Button(
+    root,
+    text="Rebet",
+    width=12,
+    font=("Helvetica", 14),
+    bg=bc,
+    fg="black",
+    activebackground=bc,
+    activeforeground="white",
+    bd=0,
+    highlightthickness=0,
+    padx=4,
+    pady=2,
+    command=lambda: rebet(game),
+    state=tkinter.DISABLED
+    )
+    rebet_button.place(x = 650, y = 525)
+
+
     # Add chips
     chipList = []
     redChip = Image.open(f"{IMG_PATH}/red.png").resize((50, 50 ), Image.ANTIALIAS)
@@ -925,6 +978,7 @@ def main(args):
         fix_mistakes,
         insurance_chip,
         dealer_info,
+        rebet_button,
         dealer_card_values,  # Add dealer_card_values as an attribute
         player_card_values, # Add player_card_values as an attribute
         chipList
