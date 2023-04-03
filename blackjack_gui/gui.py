@@ -12,6 +12,7 @@ from tkinter import messagebox
 N_CARDS_MAX = 9
 IMG_PATH = f"{os.path.dirname(__file__)}/images/"
 USER_BET = 0
+BC = "#2B674D"
 
 @dataclass
 class Gui:
@@ -451,10 +452,13 @@ class Game:
             for key, button in self.gui.menu.items():
                 if key != "reset":
                     button.configure(state=tkinter.DISABLED)
+                    button.configure(bg=BC, fg=BC)
         else:
             for button in buttons:
                 if button in self.gui.menu.keys():
                     self.gui.menu[button].configure(state=tkinter.DISABLED)
+                    self.gui.menu[button].configure(bg=BC, fg=BC)
+
 
     def show_buttons(self, buttons: Union[tuple, None] = None):
         """Shows menu buttons."""
@@ -462,10 +466,13 @@ class Game:
             for key, button in self.gui.menu.items():
                 if key not in ("insurance", "even-money"):
                     button.configure(state=tkinter.NORMAL)
+                    button.configure(bg="white", fg="black")
         else:
             for button in buttons:
                 if button in self.gui.menu.keys():
                     self.gui.menu[button].configure(state=tkinter.NORMAL)
+                    self.gui.menu[button].configure(bg ="white", fg= "black")
+
 
     def clean_player_slots(self):
         """Cleans player card slots."""
@@ -683,27 +690,26 @@ def show_help(root):
     help_label.pack(fill="both", expand=True)
 
 def main(args):
-    bc = "#2B674D"
     root = tkinter.Tk()
     root.geometry("1200x700")
     root.title("Blackjack")
-    root.configure(background=bc)
+    root.configure(background=BC)
 
-    main_menu_frame = tkinter.Frame(root, height=700, width=1200, background=bc)
+    main_menu_frame = tkinter.Frame(root, height=700, width=1200, background=BC)
     main_menu_frame.pack(fill="both")
 
-    game_frame = tkinter.Frame(root, height=700, width=1200, background=bc)
-    credits_frame = tkinter.Frame(root, height=700, width=1200, background=bc)
+    game_frame = tkinter.Frame(root, height=700, width=1200, background=BC)
+    credits_frame = tkinter.Frame(root, height=700, width=1200, background=BC)
 
     rect = tkinter.Canvas(
-        game_frame, bg=bc, height=100, width=80, bd=0, highlightthickness=0, relief="ridge"
+        game_frame, bg=BC, height=100, width=80, bd=0, highlightthickness=0, relief="ridge"
     )
     rect.place(x=525, y=485)
-    round_polygon(rect, [5, 75, 75, 5], [5, 5, 90, 90], 10, width=4, outline="#bbb500", fill=bc)
+    round_polygon(rect, [5, 75, 75, 5], [5, 5, 90, 90], 10, width=4, outline="#bbb500", fill=BC)
     rules_text = tkinter.Label(game_frame,
                                   text="BLACKJACK PAYS 3 TO 2\nDealer must stand on a 17 and draw to 16\nInsurance pays 2 to 1",
                                   font=("Helvetica", 14, "italic"),
-                                  bg=bc)
+                                  bg=BC)
     rules_text.place(relx=0.5, rely=0.5, anchor="center")
     # Shoe status
     shoe_status_container = tkinter.Label(game_frame, borderwidth=0, background="white")
@@ -712,7 +718,7 @@ def main(args):
         shoe_status_container, background="black", borderwidth=0, anchor="e"
     )
     shoe_label = tkinter.Label(
-        game_frame, text="Discard", font="12", borderwidth=0, background=bc, fg="white"
+        game_frame, text="Discard", font="12", borderwidth=0, background=BC, fg="white"
     )
     shoe_label.place(x=5, y=195)
 
@@ -723,7 +729,7 @@ def main(args):
         textvariable=label_text,
         font="Helvetica 13 bold",
         borderwidth=0,
-        background=bc,
+        background=BC,
         fg="white",
     )
     label.place(x=430, y=670)
@@ -738,7 +744,7 @@ def main(args):
             textvariable=info_text[str(slot)],
             font="helvetica 11 bold",
             borderwidth=0,
-            background=bc,
+            background=BC,
             fg="white",
         )
         for slot in range(4)
@@ -748,18 +754,18 @@ def main(args):
 
     # Dealer info
     dealer_info = tkinter.Label(
-        game_frame, text="", font="helvetica 11 bold", borderwidth=0, background=bc, fg="white"
+        game_frame, text="", font="helvetica 11 bold", borderwidth=0, background=BC, fg="white"
     )
     dealer_info.place(x=305, y=180)
 
     # Dealer finger
-    finger = {str(slot): tkinter.Label(game_frame, borderwidth=0, background=bc) for slot in range(4)}
+    finger = {str(slot): tkinter.Label(game_frame, borderwidth=0, background=BC) for slot in range(4)}
     for ind, f in enumerate(finger.values()):
         f.place(x=ind * x_slot + padding_left - 5, y=250)
 
     # Player cards
     slot_player = {
-        f"{str(slot)}{str(pos)}": tkinter.Label(game_frame, borderwidth=0, background=bc)
+        f"{str(slot)}{str(pos)}": tkinter.Label(game_frame, borderwidth=0, background=BC)
         for slot in range(4)
         for pos in range(N_CARDS_MAX)
     }
@@ -773,7 +779,7 @@ def main(args):
     n_dealer_cards = 7
     card_back_img, _, _ = get_image()
     slot_dealer = {
-        f"{str(pos)}": tkinter.Label(game_frame, borderwidth=0, background=bc)
+        f"{str(pos)}": tkinter.Label(game_frame, borderwidth=0, background=BC)
         for pos in range(n_dealer_cards)
     }
     for pos in range(2):
@@ -785,7 +791,7 @@ def main(args):
 
     # Chips
     chips = {
-        f"{str(slot)}{str(pos)}": tkinter.Label(game_frame, borderwidth=0, background=bc)
+        f"{str(slot)}{str(pos)}": tkinter.Label(game_frame, borderwidth=0, background=BC)
         for slot in range(4)
         for pos in range(5)
     }
@@ -808,12 +814,12 @@ def main(args):
             )
 
     # Insurance chip
-    insurance_chip = tkinter.Label(game_frame, borderwidth=0, background=bc)
+    insurance_chip = tkinter.Label(game_frame, borderwidth=0, background=BC)
     insurance_chip.place(x=450, y=400)
 
     # Side panel
     panel = tkinter.Label(
-    game_frame, width=200, height=720, background=bc, borderwidth=0, padx=20
+    game_frame, width=200, height=720, background=BC, borderwidth=0, padx=20
     )
     panel.place(x=1000, y=0)
 
@@ -840,7 +846,7 @@ def main(args):
     padx=10,
     pady=5,
     command=lambda: show_help(game_frame),
-    state=tkinter.ACTIVE
+    state=tkinter.DISABLED
 )
     help_button.place(x=1025, y=650)
 
@@ -850,7 +856,7 @@ def main(args):
         textvariable=dealer_card_values,
         font="Helvetica 13 bold",
         borderwidth=0,
-        background=bc,
+        background=BC,
         fg="white",
     )
     dealer_card_values_label.place(x=250, y=20)
@@ -862,7 +868,7 @@ def main(args):
         textvariable=player_card_values,
         font="Helvetica 13 bold",
         borderwidth=0,
-        background=bc,
+        background=BC,
         fg="white",
     )
     player_card_values_label.place(x=250, y=600)
@@ -931,9 +937,9 @@ def main(args):
     text="Rebet",
     width=12,
     font=("Helvetica", 14),
-    bg=bc,
+    bg=BC,
     fg="black",
-    activebackground=bc,
+    activebackground=BC,
     activeforeground="white",
     bd=0,
     highlightthickness=0,
@@ -959,10 +965,10 @@ def main(args):
     blackChip = Image.open(f"{IMG_PATH}/black.png").resize((50, 50), Image.ANTIALIAS)
     blackChipPhoto = ImageTk.PhotoImage(blackChip)
 
-    button1 = tkinter.Button(game_frame, image=redChipPhoto, bd = 0, command = lambda: game.increment_bet("red"), bg=bc)
+    button1 = tkinter.Button(game_frame, image=redChipPhoto, bd = 0, command = lambda: game.increment_bet("red"), bg=BC)
     button1.place(x=500, y = 600)
 
-    button2 = tkinter.Button(game_frame, image=blueChipPhoto, bd = 0, command = lambda: game.increment_bet("blue"), fg=bc)
+    button2 = tkinter.Button(game_frame, image=blueChipPhoto, bd = 0, command = lambda: game.increment_bet("blue"), fg=BC)
     button2.place(x=555, y = 600)
 
     button3 = tkinter.Button(game_frame, image=greenChipPhoto, bd = 0, command = lambda: game.increment_bet("green"), fg="white")
@@ -1007,7 +1013,7 @@ def main(args):
     menu_label = tkinter.Label(main_menu_frame,
                                   text="BLACKJACK",
                                   font=("Times", 36, "bold italic"),
-                                  bg=bc)
+                                  bg=BC)
     menu_label.place(relx=0.5, y=225, anchor="center")
 
     play_game_button = tkinter.Button(main_menu_frame,
@@ -1070,7 +1076,7 @@ def main(args):
     credits_label = tkinter.Label(credits_frame,
                                   text="Developers:\nReese Collins\nDaniel McGarr\nNavjeeven Mann\nSundin",
                                   font=("Helvetica", 18),
-                                  bg=bc)
+                                  bg=BC)
     credits_label.place(relx=0.5, rely=0.5, anchor="center")
 
     gui = Gui(
