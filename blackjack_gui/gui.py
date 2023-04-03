@@ -558,7 +558,7 @@ class Game:
     def display_chip(self, pos: int,hand: Hand = None, color: str = "red"):
         global USER_BET
         """Displays chip for certain hand and chip position."""
-        img = get_chip_image(color)
+        img = get_chip_image("noLabel" + color)
         if hand is not None:
             if color == "red":
                 text = USER_BET
