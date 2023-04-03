@@ -15,7 +15,7 @@ USER_BET = 0
 
 @dataclass
 class Gui:
-    root: tkinter.Tk
+    root: tkinter.Frame
     menu: dict
     label_text: tkinter.StringVar
     slot_player: dict
@@ -28,6 +28,7 @@ class Gui:
     fix_mistakes: tkinter.IntVar
     insurance_chip: tkinter.Label
     dealer_info: tkinter.Label
+    rebet_button: tkinter.Button
     dealer_card_values: tkinter.StringVar  # Add dealer_card_values as an attribute
     player_card_values: tkinter.StringVar  # Add player_card_values as an attribute
     betChips: list = None
@@ -47,7 +48,10 @@ class Game:
     def deal(self):
         """Starts new round."""
         global USER_BET
-        if USER_BET > 0:
+
+        if USER_BET == 0:
+            self.display_info("Please bet")
+        else:
             self.display_info("")
             self.bet = USER_BET
             self.disable_chips()
@@ -94,8 +98,8 @@ class Game:
                 else:
                     self.show_buttons(("insurance",))
                     self.hide_buttons(("even-money",))
-        else:
-            self.display_info("Please bet")
+
+
     def surrender(self):
         """Method for Surrender button."""
         if self.gui.fix_mistakes.get() == 1:
@@ -119,33 +123,42 @@ class Game:
     def double(self):
         """Method for Double button."""
         hand = self.get_hand_in_active_slot()
-        if self.gui.fix_mistakes.get() == 1:
-            if self.check_play(hand, "double") is False:
-                return
-        self.hide_buttons(("surrender",))
-        self.player.stack -= self.bet
-        self.display_stack()
-        hand.bet += self.bet
-        hand.deal(self.shoe, self.gui.shoe_progress)
-        self.display_chip(1, hand)
-        hand.is_finished = True
-        self.display_player_cards(hand, rotate_last=True)
-        if hand.sum > 21:
-            self.hide(hand)
-            self.hide_chips(hand)
-        self.clean_info()
-        self.resolve_next_hand()
+        if self.player.stack - USER_BET > 0:
+            if self.gui.fix_mistakes.get() == 1:
+                if self.check_play(hand, "double") is False:
+                    return
+            self.hide_buttons(("surrender",))
+            self.player.stack -= self.bet
+            self.display_stack()
+            hand.bet += self.bet
+            hand.deal(self.shoe, self.gui.shoe_progress)
 
+            self.display_chip(1, hand)
+            hand.is_finished = True
+            self.gui.player_card_values.set(f"Player: {hand.sum}")
+            self.display_player_cards(hand, rotate_last=True)
+            if hand.sum > 21:
+                self.hide(hand)
+                self.hide_chips(hand)
+            self.clean_info()
+            self.resolve_next_hand()
+        else:
+            self.display_info("You do not have enough to double")
     def reset(self):
         """Method for Reset button."""
-        self.clean_info()
+
         self.player.buy_in(self.player.initial_stack)
         self.shoe = self.init_shoe()
         self.clean_dealer_slots()
         self.player.init_count()
+        USER_BET = 0
         self.display_chip(0)
         self.display_stack()
-
+        self.clean_info()
+        self.hide_all_chips()
+        self.hide_insurance_chip()
+        self.hide_fingers()
+        self.clean_player_slots()
 
 
     def disable_chips(self):
@@ -338,7 +351,9 @@ class Game:
         self.show_buttons(("deal",))
         self.player.update_count(self.dealer, self.shoe)
         self.enable_chips()
+        self.bet = USER_BET
         USER_BET = 0
+        self.gui.rebet_button.configure(state=tkinter.NORMAL)
 
     def _resolve_lost_hand(self, hand: Hand):
         self.hide_chips(hand)
@@ -465,6 +480,9 @@ class Game:
 
     def clean_info(self):
         """Removes info text behind all slots."""
+        self.gui.dealer_card_values.set(f"")
+        self.gui.player_card_values.set(f"")
+
         for slot in range(4):
             self.gui.info_text[str(slot)].set("")
 
@@ -631,6 +649,21 @@ def round_polygon(canvas, x, y, sharpness, **kwargs):
             points.append(y[0])
     return canvas.create_polygon(points, **kwargs, smooth=tkinter.TRUE)
 
+
+def rebet(self):
+    global USER_BET
+    if self.player.stack - self.bet < 0:
+        self.display_info("You cannot have a negative balance")
+    else:
+        self.player.stack -= self.bet
+        USER_BET = self.bet
+        self.hide_all_chips()
+        self.display_chip(0)
+        self.display_stack()
+        self.gui.rebet_button.configure(state = tkinter.DISABLED)
+
+
+
 # function to show the help text
 def show_help(root):
     help_text = "Blackjack Help\n\n"
@@ -656,27 +689,33 @@ def main(args):
     root.title("Blackjack")
     root.configure(background=bc)
 
+    main_menu_frame = tkinter.Frame(root, height=700, width=1200, background=bc)
+    main_menu_frame.pack(fill="both")
+
+    game_frame = tkinter.Frame(root, height=700, width=1200, background=bc)
+    credits_frame = tkinter.Frame(root, height=700, width=1200, background=bc)
+
     rect = tkinter.Canvas(
-        root, bg=bc, height=100, width=80, bd=0, highlightthickness=0, relief="ridge"
+        game_frame, bg=bc, height=100, width=80, bd=0, highlightthickness=0, relief="ridge"
     )
     rect.place(x=525, y=485)
     round_polygon(rect, [5, 75, 75, 5], [5, 5, 90, 90], 10, width=4, outline="#bbb500", fill=bc)
 
     # Shoe status
-    shoe_status_container = tkinter.Label(root, borderwidth=0, background="white")
-    shoe_status_container.place(x=20, y=30, height=150, width=30)
+    shoe_status_container = tkinter.Label(game_frame, borderwidth=0, background="white")
+    shoe_status_container.place(x=20, y=40, height=150, width=30)
     shoe_progress = tkinter.Label(
         shoe_status_container, background="black", borderwidth=0, anchor="e"
     )
     shoe_label = tkinter.Label(
-        root, text="Discard", font="12", borderwidth=0, background=bc, fg="white"
+        game_frame, text="Discard", font="12", borderwidth=0, background=bc, fg="white"
     )
-    shoe_label.place(x=5, y=190)
+    shoe_label.place(x=5, y=195)
 
     # Stack info
-    label_text = tkinter.StringVar(root)
+    label_text = tkinter.StringVar(game_frame)
     label = tkinter.Label(
-        root,
+        game_frame,
         textvariable=label_text,
         font="Helvetica 13 bold",
         borderwidth=0,
@@ -688,10 +727,10 @@ def main(args):
     # Hand info
     x_slot = 250
     padding_left = 20
-    info_text = {str(slot): tkinter.StringVar(root) for slot in range(4)}
+    info_text = {str(slot): tkinter.StringVar(game_frame) for slot in range(4)}
     info = {
         str(slot): tkinter.Label(
-            root,
+            game_frame,
             textvariable=info_text[str(slot)],
             font="helvetica 11 bold",
             borderwidth=0,
@@ -705,18 +744,18 @@ def main(args):
 
     # Dealer info
     dealer_info = tkinter.Label(
-        root, text="", font="helvetica 11 bold", borderwidth=0, background=bc, fg="white"
+        game_frame, text="", font="helvetica 11 bold", borderwidth=0, background=bc, fg="white"
     )
     dealer_info.place(x=305, y=180)
 
     # Dealer finger
-    finger = {str(slot): tkinter.Label(root, borderwidth=0, background=bc) for slot in range(4)}
+    finger = {str(slot): tkinter.Label(game_frame, borderwidth=0, background=bc) for slot in range(4)}
     for ind, f in enumerate(finger.values()):
         f.place(x=ind * x_slot + padding_left - 5, y=250)
 
     # Player cards
     slot_player = {
-        f"{str(slot)}{str(pos)}": tkinter.Label(root, borderwidth=0, background=bc)
+        f"{str(slot)}{str(pos)}": tkinter.Label(game_frame, borderwidth=0, background=bc)
         for slot in range(4)
         for pos in range(N_CARDS_MAX)
     }
@@ -730,7 +769,7 @@ def main(args):
     n_dealer_cards = 7
     card_back_img, _, _ = get_image()
     slot_dealer = {
-        f"{str(pos)}": tkinter.Label(root, borderwidth=0, background=bc)
+        f"{str(pos)}": tkinter.Label(game_frame, borderwidth=0, background=bc)
         for pos in range(n_dealer_cards)
     }
     for pos in range(2):
@@ -742,7 +781,7 @@ def main(args):
 
     # Chips
     chips = {
-        f"{str(slot)}{str(pos)}": tkinter.Label(root, borderwidth=0, background=bc)
+        f"{str(slot)}{str(pos)}": tkinter.Label(game_frame, borderwidth=0, background=bc)
         for slot in range(4)
         for pos in range(5)
     }
@@ -765,26 +804,26 @@ def main(args):
             )
 
     # Insurance chip
-    insurance_chip = tkinter.Label(root, borderwidth=0, background=bc)
+    insurance_chip = tkinter.Label(game_frame, borderwidth=0, background=bc)
     insurance_chip.place(x=450, y=400)
 
     # Side panel
     panel = tkinter.Label(
-    root, width=200, height=720, background="lightgrey", borderwidth=0, padx=20
+    game_frame, width=200, height=720, background="lightgrey", borderwidth=0, padx=20
     )
     panel.place(x=1000, y=0)
 
     # Advisor button
     fix_mistakes = tkinter.IntVar()
     checkbox_container = tkinter.Checkbutton(
-        root, text="Coach mode", variable=fix_mistakes,fg="black", background="lightgrey",
+        game_frame, text="Coach mode", variable=fix_mistakes,fg="black", background="lightgrey",
         command=lambda: help_button.config(state=tkinter.NORMAL if fix_mistakes.get() else tkinter.DISABLED)
     )
     checkbox_container.place(x=1050, y=580)
 
     # Help button
     help_button = tkinter.Button(
-    root,
+    game_frame,
     text="Get Help",
     width=12,
     font=("Helvetica", 14),
@@ -796,14 +835,14 @@ def main(args):
     highlightthickness=0,
     padx=10,
     pady=5,
-    command=lambda: show_help(root),
+    command=lambda: show_help(game_frame),
     state=tkinter.DISABLED
 )
     help_button.place(x=1025, y=650)
 
-    dealer_card_values = tkinter.StringVar(root)
+    dealer_card_values = tkinter.StringVar(game_frame)
     dealer_card_values_label = tkinter.Label(
-        root,
+        game_frame,
         textvariable=dealer_card_values,
         font="Helvetica 13 bold",
         borderwidth=0,
@@ -813,9 +852,9 @@ def main(args):
     dealer_card_values_label.place(x=250, y=20)
 
     # Add the following lines to create the player's card values label
-    player_card_values = tkinter.StringVar(root)
+    player_card_values = tkinter.StringVar(game_frame)
     player_card_values_label = tkinter.Label(
-        root,
+        game_frame,
         textvariable=player_card_values,
         font="Helvetica 13 bold",
         borderwidth=0,
@@ -828,7 +867,7 @@ def main(args):
     # Buttons
     menu = {
             name.split()[0].lower(): tkinter.Button(
-            master=root,
+            master=game_frame,
             text=name.replace("-", " "),
             width=12,
             font=("Helvetica", 14),
@@ -882,6 +921,26 @@ def main(args):
     menu["deal"].place(x=x_sidepanel, y=500)
     menu["reset"].place(x=x_sidepanel, y=20)
 
+    #Rebet Button
+    rebet_button = tkinter.Button(
+    game_frame,
+    text="Rebet",
+    width=12,
+    font=("Helvetica", 14),
+    bg=bc,
+    fg="black",
+    activebackground=bc,
+    activeforeground="white",
+    bd=0,
+    highlightthickness=0,
+    padx=4,
+    pady=2,
+    command=lambda: rebet(game),
+    state=tkinter.DISABLED
+    )
+    rebet_button.place(x = 650, y = 525)
+
+
     # Add chips
     chipList = []
     redChip = Image.open(f"{IMG_PATH}/red.png").resize((50, 50 ), Image.ANTIALIAS)
@@ -896,23 +955,116 @@ def main(args):
     blackChip = Image.open(f"{IMG_PATH}/black.png").resize((50, 50), Image.ANTIALIAS)
     blackChipPhoto = ImageTk.PhotoImage(blackChip)
 
-    button1 = tkinter.Button(root, image=redChipPhoto, bd = 0, command = lambda: game.increment_bet("red"), bg=bc)
+    button1 = tkinter.Button(game_frame, image=redChipPhoto, bd = 0, command = lambda: game.increment_bet("red"), bg=bc)
     button1.place(x=500, y = 600)
 
-    button2 = tkinter.Button(root, image=blueChipPhoto, bd = 0, command = lambda: game.increment_bet("blue"), fg=bc)
+    button2 = tkinter.Button(game_frame, image=blueChipPhoto, bd = 0, command = lambda: game.increment_bet("blue"), fg=bc)
     button2.place(x=555, y = 600)
 
-    button3 = tkinter.Button(root, image=greenChipPhoto, bd = 0, command = lambda: game.increment_bet("green"), fg="white")
+    button3 = tkinter.Button(game_frame, image=greenChipPhoto, bd = 0, command = lambda: game.increment_bet("green"), fg="white")
     button3.place(x=610, y = 600)
 
-    button4 = tkinter.Button(root, image=blackChipPhoto, bd = 0, command = lambda: game.increment_bet("black"), fg="white")
+    button4 = tkinter.Button(game_frame, image=blackChipPhoto, bd = 0, command = lambda: game.increment_bet("black"), fg="white")
     button4.place(x=665, y = 600)
 
     chipList = [button1, button2, button3, button4]
 
+    def back():
+        game_frame.pack_forget()
+        credits_frame.pack_forget()
+        main_menu_frame.pack(fill="both")
+        game.reset()
+
+
+    back_button = tkinter.Button(
+    game_frame,
+    text="Back",
+    width=12,
+    font=("Helvetica", 14),
+    bg="white",
+    fg="black",
+    activebackground="#0072c6",
+    activeforeground="white",
+    bd=0,
+    highlightthickness=0,
+    padx=10,
+    pady=5,
+    command=back,
+    state=tkinter.NORMAL
+)
+
+    back_button.place(x=5, y=5)
+
+    def start_game():
+        main_menu_frame.pack_forget()
+        game_frame.pack(fill="both")
+        fix_mistakes.set(0)
+
+    play_game_button = tkinter.Button(main_menu_frame,
+                                      text="Start Game",
+                                      width=12,
+                                      font=("Helvetica", 14),
+                                      bg="white",
+                                      fg="black",
+                                      activebackground="#0072c6",
+                                      activeforeground="white",
+                                      bd=0,
+                                      highlightthickness=0,
+                                      padx=10,
+                                      pady=5,
+                                      command=start_game
+                                      )
+    play_game_button.place(relx=0.5, y=300, anchor="center")
+
+    def start_tutorial():
+        main_menu_frame.pack_forget()
+        game_frame.pack(fill="both")
+        fix_mistakes.set(1)
+
+    tutorial_button = tkinter.Button(main_menu_frame,
+                                     text="Tutorial",
+                                     width=12,
+                                     font=("Helvetica", 14),
+                                     bg="white",
+                                     fg="black",
+                                     activebackground="#0072c6",
+                                     activeforeground="white",
+                                     bd=0,
+                                     highlightthickness=0,
+                                     padx=10,
+                                     pady=5,
+                                     command=start_tutorial
+                                     )
+    tutorial_button.place(relx=0.5, y=350, anchor="center")
+
+    def show_credits():
+        main_menu_frame.pack_forget()
+        credits_frame.pack(fill="both")
+
+    credits_button = tkinter.Button(main_menu_frame,
+                                    text="Credits",
+                                    width=12,
+                                    font=("Helvetica", 14),
+                                    bg="white",
+                                    fg="black",
+                                    activebackground="#0072c6",
+                                    activeforeground="white",
+                                    bd=0,
+                                    highlightthickness=0,
+                                    padx=10,
+                                    pady=5,
+                                    command=show_credits
+                                    )
+    credits_button.place(relx=0.5, y=400, anchor="center")
+
+    credits_label = tkinter.Label(credits_frame,
+                                  text="Developers:\nReese Collins\nDaniel McGarr\nNavjeeven Mann\nSundin",
+                                  font=("Helvetica", 18),
+                                  bg=bc)
+    credits_label.place(relx=0.5, rely=0.5, anchor="center")
 
     gui = Gui(
-        root,
+        game_frame,
         menu,
         label_text,
         slot_player,
@@ -925,6 +1077,7 @@ def main(args):
         fix_mistakes,
         insurance_chip,
         dealer_info,
+        rebet_button,
         dealer_card_values,  # Add dealer_card_values as an attribute
         player_card_values, # Add player_card_values as an attribute
         chipList
