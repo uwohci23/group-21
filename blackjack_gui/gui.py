@@ -703,14 +703,14 @@ def main(args):
 
     # Shoe status
     shoe_status_container = tkinter.Label(game_frame, borderwidth=0, background="white")
-    shoe_status_container.place(x=20, y=30, height=150, width=30)
+    shoe_status_container.place(x=20, y=40, height=150, width=30)
     shoe_progress = tkinter.Label(
         shoe_status_container, background="black", borderwidth=0, anchor="e"
     )
     shoe_label = tkinter.Label(
         game_frame, text="Discard", font="12", borderwidth=0, background=bc, fg="white"
     )
-    shoe_label.place(x=5, y=190)
+    shoe_label.place(x=5, y=195)
 
     # Stack info
     label_text = tkinter.StringVar(game_frame)
@@ -923,7 +923,7 @@ def main(args):
 
     #Rebet Button
     rebet_button = tkinter.Button(
-    root,
+    game_frame,
     text="Rebet",
     width=12,
     font=("Helvetica", 14),
@@ -975,9 +975,24 @@ def main(args):
         main_menu_frame.pack(fill="both")
         game.reset()
 
-    back_button = tkinter.Button(root,
-                                 text="Back",
-                                 command=back)
+
+    back_button = tkinter.Button(
+    game_frame,
+    text="Back",
+    width=12,
+    font=("Helvetica", 14),
+    bg="white",
+    fg="black",
+    activebackground="#0072c6",
+    activeforeground="white",
+    bd=0,
+    highlightthickness=0,
+    padx=10,
+    pady=5,
+    command=back,
+    state=tkinter.NORMAL
+)
+
     back_button.place(x=5, y=5)
 
     def start_game():
