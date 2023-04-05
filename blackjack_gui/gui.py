@@ -469,12 +469,12 @@ class Game:
             for key, button in self.gui.menu.items():
                 if key != "reset":
                     button.configure(state=tkinter.DISABLED)
-                    button.configure(bg=BC, fg=BC)
+                    button.configure(bg=BC)
         else:
             for button in buttons:
                 if button in self.gui.menu.keys():
                     self.gui.menu[button].configure(state=tkinter.DISABLED)
-                    self.gui.menu[button].configure(bg=BC, fg=BC)
+                    self.gui.menu[button].configure(bg=BC)
 
 
     def show_buttons(self, buttons: Union[tuple, None] = None):
@@ -483,12 +483,12 @@ class Game:
             for key, button in self.gui.menu.items():
                 if key not in ("insurance", "even-money"):
                     button.configure(state=tkinter.NORMAL)
-                    button.configure(bg="white", fg="black")
+                    button.configure(bg="white")
         else:
             for button in buttons:
                 if button in self.gui.menu.keys():
                     self.gui.menu[button].configure(state=tkinter.NORMAL)
-                    self.gui.menu[button].configure(bg ="white", fg= "black")
+                    self.gui.menu[button].configure(bg="white")
 
 
     def clean_player_slots(self):
@@ -898,14 +898,16 @@ def main(args):
             text=name.replace("-", " "),
             width=12,
             font=("Helvetica", 14),
-            bg="white",
+            bg="white" if name == "Deal" or name == "Reset" else BC,
             fg="black",
+            disabledforeground=BC,
             activebackground="#0072c6",
             activeforeground="white",
             bd=0,
             highlightthickness=0,
             padx=10,
             pady=5,
+            state=tkinter.NORMAL if name == "Deal" or name == "Reset" else tkinter.DISABLED
         )
         for name in (
             "Even-money",
