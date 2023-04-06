@@ -1,8 +1,14 @@
 ---
 ---
 
-@import "{{ site.theme }}";
+@import
+  "minima/skins/{{ site.minima.skin | default: 'classic' }}",
+  "minima/initialize";
 
 header {
 	display: none;
+}
+
+h1 {
+	font-size: 42px;
 }
