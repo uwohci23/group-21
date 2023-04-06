@@ -58,7 +58,7 @@ To further enhance the user experience, we have re-designed the game with high c
 Overall, our redesigned blackjack game system is designed with the user in mind, focusing on simplicity, ease of use, and an engaging user experience. By incorporating human-computer interaction principles such as the 80/20 rule, confirmation for actions, and high cognitive offloading, we have created a game that is both accessible and immersive, ensuring a positive user experience for all players.
 
 ## Navigational Map
-![](/docs/assets/images/Map.png)
+![](/assets/images/Map.png)
 
 ## Design Principles
 ### 80/20 Rule
