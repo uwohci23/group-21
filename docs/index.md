@@ -5,6 +5,38 @@
 {:toc}
 
 ## Authors
+<table>
+	<tr>
+		<td markdown="span"><center>Reese Collins<br></center>
+		<center>*University of Western Ontario*<br></center>
+		<center>*Department of Computer Science*<br></center>
+		<center>rcolli47@uwo.ca</center>
+		</td>
+		<td markdown="span"><center>Daniel McGarr<br></center>
+		<center>*University of Western Ontario*<br></center>
+		<center>*Department of Computer Science*<br></center>
+		<center>dmcgarr@uwo.ca</center>
+		</td>
+		<td markdown="span"><center>Navjeeven Mann<br></center>
+		<center>*University of Western Ontario*<br></center>
+		<center>*Department of Computer Science*<br></center>
+		<center>nmann29@uwo.ca</center>
+		</td>
+		<td markdown="span"><center>Sundin Nguyen<br></center>
+		<center>*University of Western Ontario*<br></center>
+		<center>*Department of Computer Science*<br></center>
+		<center>snguy22@uwo.ca</center>
+		</td>
+		<td markdown="span"><center>Andrew Domfe<br></center>
+		<center>*University of Western Ontario*<br></center>
+		<center>*Department of Computer Science*<br></center>
+		<center>adomfe@uwo.ca</center>
+		</td>
+	</tr>
+	<tr>
+		<td colspan="5" markdown="span"><center>Original Repository by Simo Tukiainen (simo.tukiainen@fmi.fi)</center></td>
+	</tr>
+</table>
 | Reese Collins | Daniel McGarr | Navjeeven Mann | Sundin Nguyen | Andrew Domfe |
 | *University of Western Ontario* | *University of Western Ontario* | *University of Western Ontario* | *University of Western Ontario* | *University of Western Ontario* |
 | *Department of Computer Science* | *Department of Computer Science* | *Department of Computer Science* | *Department of Computer Science* | *Department of Computer Science* |
