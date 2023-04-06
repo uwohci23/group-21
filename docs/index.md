@@ -1,5 +1,5 @@
 ---
-layout: base
+layout: page
 ---
 # CS4474B Final Report - Group 21
 
