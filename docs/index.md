@@ -1,43 +1,16 @@
 # CS4474B Final Report - Group 21
 
 ## Table of Contents
-<!-- * [Introduction]()
-* [Executive Summary](#executive-summary)
-* [Navigational Map](#navigational-map)
-* [Design Principles](#design-principles)
-  * [80/20 Rule](#8020-rule)
-  * [Confirmation of Actions](#confirmation-of-actions)
-  * [Externalization of Information](#externalization-of-information)
-  * [Visibility](#visibility)
-  * [Affordance](#affordance)
-  * [Familiarity](#familiarity)
-  * [Constraints](#constraints)
-  * [Chunks](#chunks)
-  * [Fitts' Law](#fitts-law)
-  * [Consistency](#consistency)
-  * [Gulf of Evaluation](#gulf-of-evaluation)
-  * [Gulf of Execution](#gulf-of-execution)
-  * [Metaphors](#metaphors)
-  * [Semiotics](#semiotics)
-  * [Progressive Disclosure](#progressive-disclosure)
-  * [Causality](#causality)
-* [Heuristic Evaluation](#heuristic-evaluation)
-  * [Visibility of System Status](#visibility-of-system-status)
-  * [Match Between the System and the Real World](#match-between-the-system-and-the-real-world)
-  * [User Control & Freedom](#user-control-and-freedom)
-  * [Consistency and Standards](#consistency-and-standards)
-  * [Error Prevention](#error-prevention)
-  * [Recognition vs. Recall in User Interfaces](#recognition-vs-recall-in-user-interfaces)
-  * [Flexibility and Efficiency of Use](#flexibility-and-efficiency-of-use)
-  * [Aesthetic and Minimalist Design](#aesthetic-and-minimalist-design)
-  * [Help Users Recognize, Diagnose, and Recover from Errors](#help-users-recognize-diagnose-and-recover-from-errors)
-  * [Help and Documentation](#help-and-documentation)
-* [Final Thoughts](#final-thoughts) -->
 * This line is needed, but won't appear
 {:toc}
 
-## Introduction
-
+## Authors
+| Reese Collins | Daniel McGarr | Navjeeven Mann | Sundin Nguyen | Andrew Domfe |
+| *University of Western Ontario* | *University of Western Ontario* | *University of Western Ontario* | *University of Western Ontario* | *University of Western Ontario* |
+| *Department of Computer Science* | *Department of Computer Science* | *Department of Computer Science* | *Department of Computer Science* | *Department of Computer Science* |
+| rcolli47@uwo.ca | dmcgarr@uwo.ca | nmann29@uwo.ca | snguy22@uwo.ca | adomfe@uwo.ca |
+|===|
+| Original Repository by Simo Tukiainen (simo.tukiainen@fmi.fi) |
 
 ## Executive Summary
 Our redesigned blackjack game system is designed to provide an immersive and enjoyable user experience, with a focus on simplicity and ease of use. We have approached the design of the game with a user-centered approach, prioritizing the needs and preferences of our target audience. 
