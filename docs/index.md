@@ -7,42 +7,36 @@
 ## Authors
 <table>
 	<tr>
-		<td markdown="span"><center>Reese Collins<br></center>
-		<center>*University of Western Ontario*<br></center>
-		<center>*Department of Computer Science*<br></center>
-		<center>rcolli47@uwo.ca</center>
+		<td markdown="span"><center markdown="span">Reese Collins<br/></center>
+		<center markdown="span">*University of Western Ontario*<br/></center>
+		<center markdown="span">*Department of Computer Science*<br/></center>
+		<center markdown="span">rcolli47@uwo.ca</center>
 		</td>
-		<td markdown="span"><center>Daniel McGarr<br></center>
-		<center>*University of Western Ontario*<br></center>
-		<center>*Department of Computer Science*<br></center>
-		<center>dmcgarr@uwo.ca</center>
+		<td markdown="span"><center markdown="span">Daniel McGarr<br/></center>
+		<center markdown="span">*University of Western Ontario*<br/></center>
+		<center markdown="span">*Department of Computer Science*<br/></center>
+		<center markdown="span">dmcgarr@uwo.ca</center>
 		</td>
-		<td markdown="span"><center>Navjeeven Mann<br></center>
-		<center>*University of Western Ontario*<br></center>
-		<center>*Department of Computer Science*<br></center>
-		<center>nmann29@uwo.ca</center>
+		<td><center markdown="span">Navjeeven Mann<br/></center>
+		<center markdown="span">*University of Western Ontario*<br/></center>
+		<center markdown="span">*Department of Computer Science*<br/></center>
+		<center markdown="span">nmann29@uwo.ca</center>
 		</td>
-		<td markdown="span"><center>Sundin Nguyen<br></center>
-		<center>*University of Western Ontario*<br></center>
-		<center>*Department of Computer Science*<br></center>
-		<center>snguy22@uwo.ca</center>
+		<td markdown="span"><center markdown="span">Sundin Nguyen<br/></center>
+		<center markdown="span">*University of Western Ontario*<br/></center>
+		<center markdown="span">*Department of Computer Science*<br/></center>
+		<center markdown="span">snguy22@uwo.ca</center>
 		</td>
-		<td markdown="span"><center>Andrew Domfe<br></center>
-		<center>*University of Western Ontario*<br></center>
-		<center>*Department of Computer Science*<br></center>
-		<center>adomfe@uwo.ca</center>
+		<td><center markdown="span">Andrew Domfe<br/></center>
+		<center markdown="span">*University of Western Ontario*<br/></center>
+		<center markdown="span">*Department of Computer Science*<br/></center>
+		<center markdown="span">adomfe@uwo.ca</center>
 		</td>
 	</tr>
 	<tr>
-		<td colspan="5" markdown="span"><center>Original Repository by Simo Tukiainen (simo.tukiainen@fmi.fi)</center></td>
+		<td colspan="5"><center markdown="span">Original Repository by Simo Tukiainen (simo.tukiainen@fmi.fi)</center></td>
 	</tr>
 </table>
-| Reese Collins | Daniel McGarr | Navjeeven Mann | Sundin Nguyen | Andrew Domfe |
-| *University of Western Ontario* | *University of Western Ontario* | *University of Western Ontario* | *University of Western Ontario* | *University of Western Ontario* |
-| *Department of Computer Science* | *Department of Computer Science* | *Department of Computer Science* | *Department of Computer Science* | *Department of Computer Science* |
-| rcolli47@uwo.ca | dmcgarr@uwo.ca | nmann29@uwo.ca | snguy22@uwo.ca | adomfe@uwo.ca |
-|===|
-| Original Repository by Simo Tukiainen (simo.tukiainen@fmi.fi) |
 
 ## Executive Summary
 Our redesigned blackjack game system is designed to provide an immersive and enjoyable user experience, with a focus on simplicity and ease of use. We have approached the design of the game with a user-centered approach, prioritizing the needs and preferences of our target audience. 
