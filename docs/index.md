@@ -1,3 +1,6 @@
+---
+layout: page
+---
 # CS4474B Final Report - Group 21
 
 ## Table of Contents
@@ -7,27 +10,27 @@
 ## Authors
 <table>
 	<tr>
-		<td markdown="span"><center markdown="span">Reese Collins<br/></center>
+		<td markdown="span"><center markdown="span">**Reese Collins**<br/></center>
 		<center markdown="span">*University of Western Ontario*<br/></center>
 		<center markdown="span">*Department of Computer Science*<br/></center>
 		<center markdown="span">rcolli47@uwo.ca</center>
 		</td>
-		<td markdown="span"><center markdown="span">Daniel McGarr<br/></center>
+		<td markdown="span"><center markdown="span">**Daniel McGarr**<br/></center>
 		<center markdown="span">*University of Western Ontario*<br/></center>
 		<center markdown="span">*Department of Computer Science*<br/></center>
 		<center markdown="span">dmcgarr@uwo.ca</center>
 		</td>
-		<td><center markdown="span">Navjeeven Mann<br/></center>
+		<td><center markdown="span">**Navjeeven Mann**<br/></center>
 		<center markdown="span">*University of Western Ontario*<br/></center>
 		<center markdown="span">*Department of Computer Science*<br/></center>
 		<center markdown="span">nmann29@uwo.ca</center>
 		</td>
-		<td markdown="span"><center markdown="span">Sundin Nguyen<br/></center>
+		<td markdown="span"><center markdown="span">**Sundin Nguyen**<br/></center>
 		<center markdown="span">*University of Western Ontario*<br/></center>
 		<center markdown="span">*Department of Computer Science*<br/></center>
 		<center markdown="span">snguy22@uwo.ca</center>
 		</td>
-		<td><center markdown="span">Andrew Domfe<br/></center>
+		<td><center markdown="span">**Andrew Domfe**<br/></center>
 		<center markdown="span">*University of Western Ontario*<br/></center>
 		<center markdown="span">*Department of Computer Science*<br/></center>
 		<center markdown="span">adomfe@uwo.ca</center>
