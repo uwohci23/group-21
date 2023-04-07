@@ -175,6 +175,9 @@ The text indicates to the user how the payouts are made and the rules the dealer
 
 With blackjack having a unique combination of skill and luck to beat the dealer, our redesign on the game provides the user enough help and documentation to succeed. Our help documentation can be found only when coach mode has been selected, this could be taken further; the user is only informed with the meaning behind each action of the game from the help documentation. This documentation could be further refined by implementing the strategy chart below.
 
+<img src="https://github.com/uwohci23/group-21/raw/main/docs/assets/images/Strategy%20chart.png" width="300px"/>
+<img src="https://github.com/uwohci23/group-21/raw/main/docs/assets/images/strategy%20chart%20legend.png" width="300px"/>
+
 By incorporating this chart into the help documentation it will allow users to gain familiarity with which state of hands results in what action. Our evaluation of our help documentation is good, along with the use of coach mode it helps the users to learn when to make what decision in the game. The improvement would allow the users to learn and remember how to play the game.
 
 ## Final Thoughts
