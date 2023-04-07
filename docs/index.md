@@ -44,6 +44,7 @@ layout: page
 	</tr>
 </table>
 
+![](/assets/images/main-menu.png)
 ## Executive Summary
 Our redesigned blackjack game system is designed to provide an immersive and enjoyable user experience, with a focus on simplicity and ease of use. We have approached the design of the game with a user-centered approach, prioritizing the needs and preferences of our target audience. 
 
@@ -61,6 +62,7 @@ Overall, our redesigned blackjack game system is designed with the user in mind,
 ![](/assets/images/Map.png)
 
 ## Design Principles
+![](/assets/images/game.png)
 ### 80/20 Rule
 During a blackjack hand, there are certain actions you can and cannot do. Depending on your cards, you may be able to hit, stand, double, etc. However, there are also cases where you’re only able to hit and stand. By employing the 80/20 rule we only show the options that are available to the user and hide the options that are not. In our system, 80% of the actions for your hand are caused by 20% of the shown actions which ultimately depend on the user's hand.
 
